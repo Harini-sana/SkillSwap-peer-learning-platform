@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SkillSwap — Learn & Teach Locally</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+  /* Dashboard Violet Scale */
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  /* Base */
+  --bg:#F6F4FB;
+  --card:#ffffff;
+  --text:#1F1F2E;
+  --muted:#6B6785;
+
+  /* Accent mapping */
+  --accent: var(--violet-700);
+  --accent-soft: var(--violet-500);
+
+  /* UI */
+  --radius:16px;
+  --shadow:0 12px 30px rgba(28,12,56,0.08);
+}
+[data-theme="dark"]{
+  --bg:#141021;
+  --card:#1E1A2E;
+  --text:#F4F2FA;
+  --muted:#B6AEDC;
+  --shadow:0 20px 40px rgba(0,0,0,0.6);
+}
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      transition:background .3s,color .3s;
+    }
+    header{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 24px;position:fixed;top:0;width:100%;background:var(--card);
+      box-shadow:var(--shadow);z-index:50;
+    }
+    .logo{font-weight:700;font-size:1.3rem;  color: var(--violet-700);
+  letter-spacing: 0.3px;
+}
+    nav{display:flex;gap:16px;align-items:center;}
+    nav a{color:var(--text);text-decoration:none;font-weight:500}
+    nav a:hover{color:var(--accent)}
+.btn {
+  background: var(--violet-700);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  transition: 0.3s;
+} .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(28,12,56,0.25);
+}
+
+.btn-login {
+  background: var(--violet-500);
+}
+
+.btn-signup {
+  background: var(--violet-700);
+}
+    .toggle-theme{background:none;border:0;cursor:pointer;color:var(--text);font-size:1rem}
+
+    /* Hero */
+    .hero{
+      position:relative;
+      height:90vh;
+      background:url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      display:flex;align-items:center;justify-content:center;
+      text-align:center;color:#fff;overflow:hidden;
+    }
+    .hero::before {
+  background: linear-gradient(
+    135deg,
+    rgba(28,12,56,0.85),
+    rgba(116,95,141,0.85)
+  );
+}
+
+    .hero-content{
+      position:relative;z-index:2;max-width:700px;padding:20px;
+      animation:fadeInUp 1.2s ease;
+    }
+    @keyframes fadeInUp{
+      from{opacity:0;transform:translateY(30px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .hero h1{font-size:2.8rem;margin-bottom:14px}
+    .hero p{font-size:1.1rem;color:#e2e8f0;margin-bottom:30px}
+
+    /* Sections */
+    .section{padding:60px 20px;max-width:1100px;margin:auto;text-align:center;}
+    .section h2{font-size:2rem;margin-bottom:20px}
+    .steps{display:grid;gap:24px;margin-top:30px}
+    @media(min-width:720px){.steps{grid-template-columns:repeat(3,1fr)}}
+    .step{background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .step span{font-size:2rem}
+
+    /* Features */
+    .features{display:grid;gap:24px;margin:60px auto;max-width:1100px;padding:40px 20px;}
+    @media(min-width:720px){.features{grid-template-columns:repeat(3,1fr)}}
+    .feature{background:var(--card);padding:24px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;transition:transform .3s}
+.feature:hover,
+.skill-card:hover,
+.step:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(28,12,56,0.15);
+}
+    .feature p{color:var(--muted);font-size:0.95rem}
+
+    /* Testimonials */
+    .testimonials{display:flex;overflow-x:auto;gap:20px;padding:20px}
+    .testimonial{min-width:300px;background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .testimonial p{font-style:italic;color:var(--muted);margin-bottom:8px}
+    .testimonial h4{color:var(--accent)}
+
+    /* Trending Skills */
+    .skills-grid{display:grid;gap:24px;margin-top:30px}
+    @media(min-width:720px){.skills-grid{grid-template-columns:repeat(3,1fr)}}
+    .skill-card{background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .skill-card:hover{transform:translateY(-5px);transition:0.3s}
+
+    /* Stats */
+    .stats{display:grid;gap:24px;margin-top:30px;text-align:center}
+    @media(min-width:720px){.stats{grid-template-columns:repeat(3,1fr)}}
+    .stat h3{font-size:2rem;color:var(--accent);margin-bottom:6px}
+
+    /* Newsletter */
+    .newsletter input{
+  padding:10px;
+  border:1px solid var(--violet-300);
+  border-radius:10px;
+  width:60%;
+  max-width:300px;
+
+  background:var(--card);
+  color:var(--text);
+}
+
+.newsletter input::placeholder{
+  color:var(--muted);
+}
+    .newsletter button{margin-left:10px}
+
+    /* Footer */
+    footer{background:var(--card);padding:40px 20px;margin-top:60px;color:var(--muted);}
+    .footer-cols{display:grid;gap:30px;text-align:left;max-width:1000px;margin:auto}
+    @media(min-width:720px){.footer-cols{grid-template-columns:repeat(3,1fr)}}
+    footer h4{color:var(--text);margin-bottom:10px}
+    footer a{color:var(--muted);text-decoration:none;display:block;margin:4px 0}
+    footer a:hover{color:var(--accent)}
+
+    /* Modals */
+    .modal {
+      display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.6);align-items:center;justify-content:center;
+    }
+    .modal-content {
+      background:var(--card);padding:30px;border-radius:var(--radius);
+      box-shadow:var(--shadow);max-width:380px;width:90%;text-align:center;
+    }
+    .close-btn{float:right;font-size:1.2rem;cursor:pointer;color:var(--muted);}
+    .modal input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:1px solid var(--violet-300);
+  border-radius:10px;
+
+  background:var(--bg);      /* theme friendly */
+  color:var(--text);         /* readable text */
+
+  font-size:14px;
+}
+
+/* placeholder visibility */
+.modal input::placeholder{
+  color:var(--muted);
+  opacity:1;
+}
+
+/* extra for glow ad perfect */
+[data-theme="dark"] .contact-form input,
+[data-theme="dark"] .contact-form textarea,
+[data-theme="dark"] .modal-content input{
+  background:#1a1628;
+}
+input:focus,
+textarea:focus{
+  outline:none;
+  border-color:var(--violet-500);
+  box-shadow:0 0 0 2px rgba(160,138,183,0.25);
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="logo">SkillSwap</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="features.html">Features</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <button class="toggle-theme" id="themeBtn">🌙</button>
+    <button class="btn btn-login" id="loginBtn">Login</button>
+    <button class="btn btn-signup" id="signupBtn">Sign Up</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1>Exchange Skills, Not Money</h1>
+    <p>Join SkillSwap — where people teach what they know and learn what they love. Build skills and community together!</p>
+    <button class="btn btn-signup" id="joinNowBtn">Get Started</button>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="feature"><h3>🧍 User Profiles</h3><p>Rich profiles with photo, bio, skills, and ratings.</p></div>
+  <div class="feature"><h3>🔁 Skill Exchange</h3><p>Offer lessons and request to learn new things.</p></div>
+  <div class="feature"><h3>💬 Chat & Scheduling</h3><p>Connect and plan directly with built-in chat.</p></div>
+  <div class="feature"><h3>⭐ Ratings & Reviews</h3><p>Leave feedback and build your teaching reputation.</p></div>
+  <div class="feature"><h3>💰 Premium Options</h3><p>Verified profiles, featured listings, and workshops.</p></div>
+  <div class="feature"><h3>🧠 AI Suggestions</h3><p>Discover ideal skill matches powered by smart AI.</p></div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step"><span>1️⃣</span><h4>Create Your Profile</h4><p>Add your skills, photo, and what you want to learn.</p></div>
+    <div class="step"><span>2️⃣</span><h4>Match & Connect</h4><p>Our smart system pairs you with the right learners or teachers.</p></div>
+    <div class="step"><span>3️⃣</span><h4>Learn & Teach</h4><p>Chat, schedule sessions, and grow together!</p></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" id="testimonials">
+  <h2>What Our Members Say</h2>
+  <div class="testimonials">
+    <div class="testimonial"><p>“I traded guitar lessons for web design tips — such a cool idea!”</p><h4>– Alex M.</h4></div>
+    <div class="testimonial"><p>“I’ve learned cooking while teaching digital art. Win-win!”</p><h4>– Priya S.</h4></div>
+    <div class="testimonial"><p>“SkillSwap connected me with amazing people globally.”</p><h4>– Daniel R.</h4></div>
+  </div>
+</section>
+
+<!-- TRENDING SKILLS -->
+<section class="section" id="skills">
+  <h2>Trending Skill Exchanges</h2>
+  <div class="skills-grid">
+    <div class="skill-card">🎸 Guitar ↔ 💻 Web Design</div>
+    <div class="skill-card">🍳 Cooking ↔ 🎨 Graphic Design</div>
+    <div class="skill-card">🧘 Yoga ↔ 🧑‍💻 Coding</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section" id="stats">
+  <h2>Our Growing Community</h2>
+  <div class="stats">
+    <div class="stat"><h3 id="count1">0</h3><p>Active Learners</p></div>
+    <div class="stat"><h3 id="count2">0</h3><p>Average Rating</p></div>
+    <div class="stat"><h3 id="count3">0</h3><p>Countries Reached</p></div>
+  </div>
+</section>
+
+<!-- AI MATCH PREVIEW -->
+<section class="section" id="ai">
+  <h2>AI-Powered Suggestions</h2>
+  <p>“You want to learn: Guitar 🎸 → Suggested: Mia (Teaches Guitar, Wants to learn: Photoshop)”</p>
+  <p>“You want to learn: Spanish 🇪🇸 → Suggested: Leo (Teaches Spanish, Wants to learn: Coding)”</p>
+</section>
+
+<!-- news letter -->
+<section class="section newsletter" id="contact">
+  <h2>Join Our Learning Community</h2>
+  <p>📬 Get updates, tips & featured exchanges right in your inbox.</p><br>
+
+  <input type="email" id="newsletterEmail" placeholder="Enter your email">
+  <button class="btn" onclick="subscribeNewsletter()">Subscribe</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-cols">
+    <div>
+      <h4>About SkillSwap</h4>
+      <p>SkillSwap connects people through teaching and learning. Share knowledge, grow communities.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="#home">Home</a>
+      <a href="features.html">Features</a>
+      <a href="privacy policy.html">Privacy policy</a>
+      <a href="terms and conditions.html">Terms and conditions</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a href="mailto:info@skillswap.com">info@skillswap.com</a>
+      <a href="#">🌐 LinkedIn</a>
+      <a href="#">📸 Instagram</a>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:20px;">© 2025 SkillSwap • Learn. Share. Connect.</p>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+    <h3>Login</h3>
+
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+
+    <button type="button" class="btn" id="loginBtnSubmit">Login</button>
+      <!-- fixed: added id="forgotLink" -->
+    <p style="margin-top:10px;color:var(--muted);">Forgot password? <a href="#" id="forgotLink" style="color:var(--accent)">Reset</a></p>
+  </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal" id="signupModal" role="dialog" aria-hidden="true">
+  <div class="modal-content">
+
+    <span class="close-btn" onclick="closeModal('signupModal')">&times;</span>
+    <h3>Sign Up</h3>
+
+    <!-- IMPORTANT: NO <form> TAG ANYWHERE -->
+    <input
+      type="text"
+      id="signupName"
+      placeholder="Full Name"
+      autocomplete="name"
+      required
+    >
+
+    <input
+      type="email"
+      id="signupEmail"
+      placeholder="Email"
+      autocomplete="email"
+      required
+    >
+
+    <input
+      type="password"
+      id="signupPassword"
+      placeholder="Password"
+      autocomplete="new-password"
+      required
+    >
+
+    <!-- Explicit type=button prevents browser submit -->
+    <button
+      type="button"
+      class="btn"
+      id="signupBtnSubmit"
+    >
+      Create Account
+    </button>
+
+  </div>
+</div>
+
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal" id="forgotModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('forgotModal')">&times;</span>
+    <h3>Reset Password</h3>
+    <input type="email" placeholder="Enter your email" id="resetEmail">
+    <button class="btn btn-login" onclick="resetPassword()">Send Reset Link</button>
+  </div>
+</div>
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+<!-- Your modals/buttons must exist before this script runs -->
+<script>
+  window.onerror = function (msg, url, line) {
+  alert("JS ERROR: " + msg + " at line " + line);
+};
+  window.onbeforeunload = () => console.log("Page is reloading...");
+    console.log("FRONTEND ORIGIN =", window.location.origin);
+    const FRONTEND_ORIGIN = "http://127.0.0.1:5500";
+  // Theme Toggle
+  const body=document.body;
+  const themeBtn=document.getElementById('themeBtn');
+  const savedTheme=localStorage.getItem('theme')||'light';
+  setTheme(savedTheme);
+  themeBtn.addEventListener('click',()=>{const t=body.dataset.theme==='light'?'dark':'light';setTheme(t);});
+  function setTheme(t){body.dataset.theme=t;localStorage.setItem('theme',t);themeBtn.textContent=t==='light'?'🌙':'☀️';}
+
+// Modal buttons
+document.getElementById('loginBtn').onclick = () => openModal('loginModal');
+document.getElementById('signupBtn').onclick = () => openModal('signupModal');
+document.getElementById('joinNowBtn').onclick = () => openModal('signupModal');
+
+const forgotLink = document.getElementById('forgotLink');
+if (forgotLink) {
+    forgotLink.onclick = (e) => {
+        e.preventDefault();
+        closeModal('loginModal');
+        openModal('forgotModal');
+    };
+}
+
+/* ============================
+   CONFIG
+============================ */
+const BASE_URL = "http://127.0.0.1:8000";
+
+/* ============================
+   DOM READY
+============================ */
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("AUTH SCRIPT ACTIVE");
+
+    const loginBtn  = document.getElementById("loginBtnSubmit");
+    const signupBtn = document.getElementById("signupBtnSubmit");
+
+    if (!loginBtn || !signupBtn) {
+        console.error("❌ Login or Signup button not found");
+        return;
+    }
+loginBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  handleLogin();
+});
+
+signupBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  handleSignup();
+});
+});
+
+/* ============================
+   POPUP + REDIRECT
+============================ */
+function showPopupAndRedirect(message, url, delay = 1200) {
+  alert("Redirect function reached. Going to: " + url);
+  window.location.href = url;
+}
+
+/* ============================
+   LOGIN
+============================ */
+async function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  if (!email || !password) {
+    alert("Email and password are required");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/login/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // 🔥 required for sessions
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    console.log("Login response:", data);
+
+    if (!res.ok) {
+      alert(data.error || "Login failed");
+      return;
+    }
+
+    if (!data.success) {
+      alert("Invalid credentials");
+      return;
+    }
+// Get existing global state or init
+const state = JSON.parse(localStorage.getItem("skillswap_state")) || {};
+
+// Save logged-in user in the SAME place everything else reads from
+state.user = {
+  id: data.user.id,
+  username: data.user.username,
+  email: data.user.email
+};
+
+localStorage.setItem("skillswap_state", JSON.stringify(state));
+
+console.log("✅ User saved to skillswap_state:", state.user);
+
+// Redirect after state is set
+window.location.replace("dashboard.html");
+
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    alert("Backend not reachable");
+  }
+}
+
+/* ============================
+   SIGNUP
+============================ */
+async function handleSignup() {
+  const username = document.getElementById("signupName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value.trim();
+
+  if (!username || !email || !password) {
+    alert("All fields are required");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/signup/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // 🔥 required
+      body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await res.json();
+    console.log("Signup response:", data);
+
+    if (!res.ok) {
+      alert(data.error || "Signup failed");
+      return;
+    }
+
+    if (!data.success) {
+      alert("Signup failed");
+      return;
+    }
+
+const state = JSON.parse(localStorage.getItem("skillswap_state")) || {};
+
+state.user = {
+  id: data.user.id,
+  username: data.user.username,
+  email: data.user.email
+};
+
+localStorage.setItem("skillswap_state", JSON.stringify(state));
+
+console.log("✅ User saved to skillswap_state:", state.user);
+
+window.location.replace("dashboard.html");
+
+  } catch (err) {
+    console.error("SIGNUP ERROR:", err);
+    alert("Backend not reachable");
+  }
+}
+
+/* ============================
+   RESET PASSWORD
+============================ */
+async function resetPassword() {
+    const email = document.getElementById("resetEmail")?.value.trim();
+
+    if (!email) {
+        alert("Please enter your email.");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${BASE_URL}/api/reset-password/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+        console.log("Reset password response:", data);
+
+        if (data.message) {
+            alert(data.message);
+            closeModal("forgotModal");
+        } else {
+            alert(data.error || "Reset failed");
+        }
+
+    } catch (err) {
+        console.error("RESET ERROR:", err);
+        alert("Backend not reachable");
+    }
+}
+
+
+/* ============================
+   MODAL CONTROLS
+============================ */
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = "flex";
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = "none";
+}
+
+window.addEventListener("click", (e) => {
+  if (e.target.classList.contains("modal")) {
+    closeModal("loginModal");
+    closeModal("signupModal");
+    closeModal("forgotModal");
+  }
+});
+// Stats Counter Animation (unchanged)
+const counters=[{id:'count1',end:12500},{id:'count2',end:4.9},{id:'count3',end:30}];
+const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            counters.forEach(c=>{
+                const el=document.getElementById(c.id);
+                let start=0;
+                const increment=c.end/100;
+                const interval=setInterval(()=>{
+                    start+=increment;
+                    if(start>=c.end){start=c.end;clearInterval(interval);}
+                    el.textContent=c.end===4.9?start.toFixed(1):Math.floor(start);
+                },20);
+            });
+            observer.disconnect();
+        }
+    });
+});
+observer.observe(document.getElementById('stats'));
+
+async function subscribeNewsletter() {
+    const email = document.getElementById("newsletterEmail").value.trim();
+
+    if (!email) {
+        alert("Please enter your email.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/newsletter/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("🎉 Thank you for subscribing!");
+            document.getElementById("newsletterEmail").value = "";
+        } else {
+            alert("⚠️ already registerd " + data.message);
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ Something went wrong. Please try again later.");
+    }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSwap – Messages</title>
+
+<style>
+/* =========================================================
+   ROOT VARIABLES (SAME AS CONNECT)
+========================================================= */
+:root {
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+
+  --success:#5CB8A6;
+}
+/* =========================================================
+   DARK MODE OVERRIDES (MISSING FIX)
+========================================================= */
+body.dark {
+  --bg-main:#141021;
+  --white:#1E1A2E;
+  --text-dark:#F4F2FA;
+  --text-muted:#B6AEDC;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* main should fill remaining space next to sidebar */
+.main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.conversations {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+  width: 80px;
+  background: var(--violet-900);
+  padding: 20px 12px;
+  transition: width 0.35s ease;
+}
+
+.sidebar:hover { width: 230px; }
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.sidebar:hover .brand { opacity: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+
+.nav-item .label { opacity: 0; }
+.sidebar:hover .label { opacity: 1; }
+
+/* =========================================================
+   MESSAGES LAYOUT
+========================================================= */
+.main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100%;
+}
+
+/* =========================================================
+   CONVERSATIONS LIST
+========================================================= */
+.conversations {
+  background: var(--white);
+  border-right: 1px solid var(--violet-100);
+  padding: 20px;
+  overflow-y: auto;
+  height: 100%;
+}
+.conversations h2 {
+  margin: 0 0 16px;
+}
+
+.chat-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.chat-item.unread {
+  background: #f2edff;
+  font-weight: 600;
+}
+
+.chat-item:hover,
+.chat-item.active {
+  background: var(--bg-main);
+}
+
+.chat-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,var(--violet-500),var(--violet-300));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.chat-meta {
+  flex: 1;
+}
+
+.chat-name {
+  font-weight: 600;
+}
+
+.chat-preview {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.chat-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unread-badge {
+  background: var(--violet-500);
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.last-active {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   CHAT AREA
+========================================================= */
+.chat-area {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;   /* 🔥 IMPORTANT for flex scroll */
+}
+/* HEADER */
+.chat-header {
+  padding: 18px 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--violet-100);
+  font-weight: 600;
+}
+
+/* MESSAGES */
+.chat-messages {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;      /* 🔥 allows flexbox scrolling */
+}
+
+.message {
+  max-width: 60%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.message.received {
+  background: var(--white);
+  border: 1px solid var(--violet-100);
+}
+
+.message.received.unseen {
+  border-left: 4px solid var(--violet-500);
+  background: #faf8ff;
+}
+
+.message.sent {
+  background: var(--violet-500);
+  color: white;
+  margin-left: auto;
+}
+
+/* INPUT */
+.chat-input {
+  padding: 16px;
+  background: var(--white);
+  border-top: 1px solid var(--violet-100);
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;   /* 🔥 prevents being squashed */
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--violet-300);
+  outline: none;
+}
+
+.chat-input button {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--violet-500);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* EMPTY STATE */
+.empty {
+  margin: auto;
+  color: var(--text-muted);
+}
+/* =========================================================
+   TYPING INDICATOR (MESSAGES)
+========================================================= */
+
+.typing-indicator {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin: 0 24px 8px;
+  width: fit-content;
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(28,12,56,0.08);
+}
+
+.typing-indicator span {
+  width: 6px;
+  height: 6px;
+  background: var(--violet-500);
+  border-radius: 50%;
+  display: inline-block;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* =========================================================
+for anchor tag
+========================================================= */
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.shared-post {
+  background: #f3f1fb;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--violet-300);
+  transition: 0.2s;
+}
+.shared-post:hover {
+  background: #eae6f8;
+  transform: translateY(-1px);
+}
+
+</style>
+<script src="theme.js"></script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">SkillSwap</div>
+
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item">
+      🏠 <span class="label">Dashboard</span>
+    </div>
+  </a>
+
+  <a href="explore.html" class="nav-link">
+    <div class="nav-item">
+      🌍 <span class="label">Explore</span>
+    </div>
+  </a>
+
+  <a href="connect.html" class="nav-link">
+    <div class="nav-item">
+      🤝 <span class="label">Connect</span>
+    </div>
+  </a>
+
+  <a href="messages.html" class="nav-link">
+    <div class="nav-item active">
+      💬 <span class="label">Messages</span>
+    </div>
+  </a>
+
+  <a href="progress.html" class="nav-link">
+    <div class="nav-item">
+      📊 <span class="label">Progress</span>
+    </div>
+  </a>
+
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      👤 <span class="label">Profile</span>
+    </div>
+  </a>
+</div>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CONVERSATIONS -->
+  <div class="conversations">
+    <h2>Messages</h2>
+     <div id="conversationList"></div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat-area">
+    <div class="chat-header" id="chatHeader">
+  Select a conversation
+</div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <!--new one for typing -->
+ <div id="typingIndicator" class="typing-indicator">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+    <!--already haven-->
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+<script>
+async function sendExchangeLink(exchangeId) {
+
+  if (!activeChatUserId) return alert("Select a user first");
+
+  await fetch(`http://127.0.0.1:8000/api/chat/${activeChatUserId}/send/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+    body: JSON.stringify({
+      exchange_id: exchangeId
+    })
+  });
+
+  openChat(activeChatUserId, document.getElementById("chatHeader").textContent);
+}
+  function getCSRFToken() {
+  const name = "csrftoken";
+  const cookies = document.cookie.split(";");
+  for (let c of cookies) {
+    const cookie = c.trim();
+    if (cookie.startsWith(name + "=")) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return null;
+}
+/* =========================================================
+   ONLINE / OFFLINE PRESENCE STATE
+========================================================= */
+let isOnline = true;
+window.addEventListener("visibilitychange", () => {
+  isOnline = !document.hidden;
+  updatePresence();
+});
+
+/* =========================================================
+   REAL CONVERSATION STATE (SOURCE OF TRUTH)
+========================================================= */
+let conversations = [];
+let activeChatUserId = null;
+let typingTimeout = null;
+
+async function loadConversations() {
+  const listEl = document.getElementById("conversationList");
+
+  try {
+    listEl.innerHTML = `<p style="color:#777">Loading conversations...</p>`;
+
+    const res = await fetch("http://127.0.0.1:8000/api/chat/conversations/", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server responded with ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    // Safety check
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid response format");
+    }
+
+    conversations = data;
+
+    console.log("Loaded conversations:", conversations);
+
+    if (conversations.length === 0) {
+      listEl.innerHTML = `
+        <div style="color:#777; padding:10px;">
+          No conversations yet.
+        </div>
+      `;
+      return;
+    }
+
+    renderConversations();
+
+  } catch (err) {
+    console.error("Conversation load failed:", err);
+    listEl.innerHTML = `
+      <div style="color:#c0392b; padding:10px;">
+        Failed to load conversations.
+      </div>
+    `;
+  }
+}
+function renderConversations() {
+  const list = document.getElementById("conversationList");
+  list.innerHTML = "";
+
+  const currentUserId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+conversations.forEach(c => {
+  if (Number(c.id) === Number(currentUserId)) return;
+    const item = document.createElement("div");
+    item.className =
+  "chat-item" +
+  (c.id === activeChatUserId ? " active" : "") +
+  (Number(c.unread || 0) > 0 ? " unread" : "");
+   const name = c.name || c.username || c.full_name || "User";
+
+item.onclick = () => openChat(c.id, name);
+
+item.innerHTML = `
+  <div class="chat-avatar">
+  ${name.slice(0,2).toUpperCase()}
+  <span style="
+    width:8px;
+    height:8px;
+    background:#5CB8A6;
+    border-radius:50%;
+    position:absolute;
+    bottom:4px;
+    right:4px;
+  "></span>
+</div>
+  <div class="chat-meta">
+    <div class="chat-meta-row">
+      <div class="chat-name">${name}</div>
+      ${Number(c.unread || 0) > 0 ? `<span class="unread-badge">${c.unread}</span>` : ""}
+    </div>
+    <div class="chat-preview">${c.lastMessage || c.last_message || ""}</div>
+    <div class="last-active">${c.lastActive || c.last_active || (isOnline ? "Online" : "Offline")}</div>
+  </div>
+`;
+    list.appendChild(item);
+  });
+}
+function openSharedPost(postId) {
+  localStorage.setItem("openPostId", postId);
+  window.location.href = "explore.html";
+}
+/* =========================================================
+   OPEN CHAT (MAIN RENDER FUNCTION)
+========================================================= */
+async function openChat(userId, name) {
+  activeChatUserId = userId;
+  connectSocket(userId);   // 🔥 open socket for this conversation
+  const header = document.getElementById("chatHeader");
+  const messagesEl = document.getElementById("chatMessages");
+
+  header.textContent = name;
+  messagesEl.innerHTML = `<div class="empty">Loading messages...</div>`;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/chat/${userId}/messages/`, {
+      credentials: "include"
+    });
+
+    if (!res.ok) {
+      console.error("Failed to load messages:", res.status);
+      messagesEl.innerHTML = `<div class="empty">Failed to load messages</div>`;
+      return;
+    }
+
+    const data = await res.json();
+    messagesEl.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      messagesEl.innerHTML = `<div class="empty">No messages yet</div>`;
+      return;
+    }
+
+    for (const msg of data) {
+      const div = document.createElement("div");
+      const currentUserId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+      const isMe = msg.sender === "me" || msg.sender_id === currentUserId;
+
+      div.className = `message ${isMe ? "sent" : "received"} ${!isMe && !msg.seen ? "unseen" : ""}`;
+
+      const timeStr = msg.time || msg.timestamp;
+      const time = timeStr
+        ? new Date(timeStr).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        : "";
+
+      // Shared post message
+// Shared post
+if (msg.post_id) {
+  div.innerHTML = `
+    <a href="explore.html?post_id=${msg.post_id}"
+       class="shared-post"
+       style="display:block;text-decoration:none;color:inherit">
+
+      📎 <strong>View Shared Post</strong>
+      <div style="font-size:12px;opacity:.7;margin-top:4px">
+        Click to open post
+      </div>
+    </a>
+    <small style="opacity:.6;font-size:11px;display:block;margin-top:6px">
+      ${time}
+      ${isMe ? ` • ${msg.seen ? "✓✓ Seen" : "✓ Sent"}` : ""}
+    </small>
+  `;
+}
+
+// Shared exchange
+else if (msg.exchange_id) {
+  div.innerHTML = `
+    <a href="exchange.html?exchange_id=${msg.exchange_id}"
+       class="shared-post"
+       style="display:block;text-decoration:none;color:inherit">
+      📎 <strong>Join Exchange Room</strong>
+      <div style="font-size:12px;opacity:.7;margin-top:4px">
+        Tap to open exchange
+      </div>
+    </a>
+    <small style="opacity:.6;font-size:11px;display:block;margin-top:6px">
+      ${time}
+      ${isMe ? ` • ${msg.seen ? "✓✓ Seen" : "✓ Sent"}` : ""}
+    </small>
+  `;
+}
+      else {
+
+  // 1️⃣ If backend saved proper exchange_id
+  if (msg.exchange_id) {
+    div.innerHTML = `
+      <a href="exchange.html?exchange_id=${msg.exchange_id}"
+         class="shared-post"
+         style="display:block;text-decoration:none;color:inherit">
+        📎 <strong>Join Exchange Room</strong>
+        <div style="font-size:12px;opacity:.7;margin-top:4px">
+          Tap to open exchange
+        </div>
+      </a>
+      <small style="opacity:.6;font-size:11px">
+        ${time}
+        ${isMe ? ` • ${msg.seen ? "✓✓ Seen" : "✓ Sent"}` : ""}
+      </small>
+    `;
+  }
+
+  // 2️⃣ If old raw URL exists
+  else if (msg.content?.includes("exchange_id=")) {
+    const match = msg.content.match(/exchange_id=(\d+)/);
+    const exchangeId = match ? match[1] : null;
+
+    if (exchangeId) {
+      div.innerHTML = `
+        <a href="exchange.html?exchange_id=${exchangeId}"
+           class="shared-post"
+           style="display:block;text-decoration:none;color:inherit">
+          📎 <strong>Join Exchange Room</strong>
+          <div style="font-size:12px;opacity:.7;margin-top:4px">
+            Tap to open exchange
+          </div>
+        </a>
+        <small style="opacity:.6;font-size:11px">
+          ${time}
+          ${isMe ? ` • ${msg.seen ? "✓✓ Seen" : "✓ Sent"}` : ""}
+        </small>
+      `;
+    }
+  }
+
+  // 3️⃣ If content literally says "Shared an exchange"
+  else if (msg.content === "Shared an exchange") {
+
+    div.innerHTML = `
+      <a href="exchange.html"
+         class="shared-post"
+         style="display:block;text-decoration:none;color:inherit">
+        📎 <strong>Join Exchange Room</strong>
+        <div style="font-size:12px;opacity:.7;margin-top:4px">
+          Tap to open exchange
+        </div>
+      </a>
+      <small style="opacity:.6;font-size:11px">
+        ${time}
+        ${isMe ? ` • ${msg.seen ? "✓✓ Seen" : "✓ Sent"}` : ""}
+      </small>
+    `;
+  }
+
+  // 4️⃣ Normal message
+  else {
+if (msg.request_from && !isMe) {
+
+div.innerHTML = `
+<div>${msg.content}</div>
+
+<div style="margin-top:8px;display:flex;gap:8px">
+<button onclick="acceptRequest(${msg.request_from}, this)"
+style="padding:6px 10px;border:none;border-radius:6px;background:#5CB8A6;color:white;cursor:pointer">
+Accept
+</button>
+
+<button onclick="declineRequest(${msg.request_from}, this)"
+style="padding:6px 10px;border:none;border-radius:6px;background:#e74c3c;color:white;cursor:pointer">
+Decline
+</button>
+</div>
+
+<small style="opacity:.6;font-size:11px">${time}</small>
+`;
+
+}
+else {
+
+div.innerHTML = `
+<div>${msg.content}</div>
+<small style="opacity:.6;font-size:11px">
+${time}
+${isMe ? ` • ${msg.seen ? "✓✓ Seen" : "✓ Sent"}` : ""}
+</small>
+`;
+
+}
+
+}
+}
+      messagesEl.appendChild(div);
+
+      // Mark incoming messages as seen
+      if (!isMe && msg.id && !msg.seen) {
+        fetch(`http://127.0.0.1:8000/api/chat/${msg.id}/seen/`, {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "X-CSRFToken": getCSRFToken()
+  }
+}).catch(() => {});
+      }
+    }
+
+let liveChatInterval = null;
+
+  } catch (err) {
+    console.error("Error loading chat:", err);
+    messagesEl.innerHTML = `<div class="empty">Something went wrong</div>`;
+  }
+  document.getElementById("chatMessages").scrollTop =
+  document.getElementById("chatMessages").scrollHeight;
+}
+/* =========================================================
+   SEND MESSAGE (REAL BACKEND)
+========================================================= */
+async function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const text = input.value.trim();
+
+  if (!text) return;
+  if (!activeChatUserId) return alert("Select a user first");
+
+  // 1️⃣ Send to backend (save in DB)
+  const res = await fetch(`http://127.0.0.1:8000/api/chat/${activeChatUserId}/send/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+  "Content-Type": "application/json",
+  "X-CSRFToken": getCSRFToken()
+},
+    body: JSON.stringify({ content: text })
+  });
+
+  if (!res.ok) {
+    alert("Message failed");
+    return;
+  }
+
+  // 2️⃣ Show instantly in UI
+  const messagesEl = document.getElementById("chatMessages");
+  const div = document.createElement("div");
+  div.className = "message sent";
+  div.innerHTML = `<div>${text}</div>`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  // 3️⃣ Send via WebSocket for other user
+  // 3️⃣ Send via WebSocket for other user
+if (socket && socket.readyState === WebSocket.OPEN) {
+
+  const currentUserId =
+    JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+  console.log("Sending WS message:", {
+    message: text,
+    receiver_id: activeChatUserId,
+    sender_id: currentUserId
+  });
+
+  socket.send(JSON.stringify({
+    message: text,
+    receiver_id: activeChatUserId,
+    sender_id: currentUserId
+  }));
+
+}
+  input.value = "";
+}
+/* =========================================================
+   TYPING INDICATOR (INPUT-BASED UI ONLY)
+========================================================= */
+document.getElementById("messageInput").addEventListener("input", () => {
+  const el = document.getElementById("typingIndicator");
+  el.style.display = "block";
+
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    el.style.display = "none";
+  }, 1200);
+});
+
+// ✅ ENTER TO SEND MESSAGE
+document.getElementById("messageInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (e.target.value.trim()) sendMessage();
+  }
+});
+/* =========================================================
+   AUTO-OPEN CHAT FROM CONNECT PAGE
+========================================================= */
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadConversations();
+
+  const autoUser = localStorage.getItem("openChatUser");
+  const shareExchangeId = localStorage.getItem("shareExchangeId");
+
+  if (autoUser) {
+    const convo = conversations.find(c => String(c.id) === String(autoUser));
+    if (convo) {
+      openChat(convo.id, convo.name || convo.username || "User");
+
+      // 🔥 if exchange share pending, send automatically
+      if (shareExchangeId) {
+        setTimeout(() => {
+          sendExchangeLink(shareExchangeId);
+          localStorage.removeItem("shareExchangeId");
+        }, 500);
+      }
+    }
+
+    localStorage.removeItem("openChatUser");
+  }
+});
+
+/* =========================================================
+   UPDATE PRESENCE (UI ONLY)
+========================================================= */
+function updatePresence() {
+  renderConversations();
+}
+/* =========================================================
+   CHAT LIVE
+========================================================= */
+// 🔥 REAL-TIME SOCKET CONNECTION
+// 🔥 REAL-TIME SOCKET CONNECTION
+let socket = null;
+
+function connectSocket(userId) {
+  if (!userId) return;
+  if (socket) {
+    socket.close();
+  }
+
+  const currentUserId =
+  JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+socket = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${currentUserId}/`);
+
+  socket.onopen = () => {
+    console.log("WebSocket connected for user:", userId);
+  };
+
+  socket.onmessage = e => {
+  const data = JSON.parse(e.data);
+
+  const messagesEl = document.getElementById("chatMessages");
+  const currentUserId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+  const isMe = Number(data.sender_id) === Number(currentUserId);
+
+  const div = document.createElement("div");
+  div.className = `message ${isMe ? "sent" : "received"}`;
+
+  const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  // 🔥 Shared Exchange
+  if (data.exchange_id) {
+    div.innerHTML = `
+      <a href="exchange.html?exchange_id=${data.exchange_id}"
+         class="shared-post"
+         style="display:block;text-decoration:none;color:inherit">
+        📎 <strong>Join Exchange Room</strong>
+        <div style="font-size:12px;opacity:.7;margin-top:4px">
+          Tap to open exchange
+        </div>
+      </a>
+      <small style="opacity:.6;font-size:11px">
+        ${time}
+      </small>
+    `;
+  }
+
+  // 🔥 Shared Post
+  else if (data.post_id) {
+    div.innerHTML = `
+      <a href="explore.html?post_id=${data.post_id}"
+         class="shared-post"
+         style="display:block;text-decoration:none;color:inherit">
+        📎 <strong>View Shared Post</strong>
+        <div style="font-size:12px;opacity:.7;margin-top:4px">
+          Click to open post
+        </div>
+      </a>
+      <small style="opacity:.6;font-size:11px">
+        ${time}
+      </small>
+    `;
+  }
+
+  // Normal message
+  else {
+    div.innerHTML = `<div>${data.message}</div>`;
+  }
+
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+};
+  socket.onclose = () => {
+    console.log("WebSocket closed");
+  };
+
+  socket.onerror = err => {
+    console.error("WebSocket error:", err);
+  };
+}
+
+
+async function acceptRequest(fromUserId, btn){
+
+const user = JSON.parse(localStorage.getItem("skillswap_state")).user;
+
+/* disable buttons instantly */
+btn.parentElement.innerHTML = "<span style='color:#5CB8A6;font-weight:600'>Request Accepted</span>";
+
+/* update request status */
+await fetch("http://127.0.0.1:8000/api/connect/accept/",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+from_user_id:fromUserId,
+to_user_id:user.id
+})
+});
+
+/* notify sender */
+await fetch("http://127.0.0.1:8000/api/messages/system/",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+sender_id:user.id,
+receiver_id:fromUserId,
+text:`Yeah!! Your skill exchange request was accepted.`
+})
+});
+
+}
+
+async function declineRequest(fromUserId, btn){
+
+const user = JSON.parse(localStorage.getItem("skillswap_state")).user;
+
+/* disable buttons instantly */
+btn.parentElement.innerHTML = "<span style='color:#e74c3c;font-weight:600'>Request Declined</span>";
+
+/* update request status */
+await fetch("http://127.0.0.1:8000/api/connect/decline/",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+from_user_id:fromUserId,
+to_user_id:user.id
+})
+});
+
+/* notify sender */
+await fetch("http://127.0.0.1:8000/api/messages/system/",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+sender_id:user.id,
+receiver_id:fromUserId,
+text:`Oh No!! Your skill exchange request was declined.`
+})
+});
+
+}
+/* =========================================================
+   SHARED POST REDIRECT
+========================================================= */
+function openSharedPost(postId) {
+  localStorage.setItem("openPostId", postId);
+  window.location.href = "explore.html";
+}
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+  });
+</script>
+
+</body>
+</html>

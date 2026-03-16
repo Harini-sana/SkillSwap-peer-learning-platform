@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exchange Room | SkillSwap</title>
+  <style>
+    :root {
+  /* ===== SkillSwap Violet System ===== */
+
+  /* Violet scale */
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  /* Base */
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+
+  /* Semantic */
+  --success:#5CB8A6;
+  --exchange:#5C8DFF;
+
+  /* ===== Compatibility aliases (IMPORTANT) ===== */
+  --blue: var(--violet-700);
+  --teal: var(--exchange);
+  --dark: var(--text-dark);
+  --light: var(--bg-main);
+  --gray: var(--text-muted);
+  --card-bg: var(--white);
+
+  /* Gradient used everywhere */
+  --gradient: linear-gradient(
+    135deg,
+    var(--violet-700),
+    var(--violet-500)
+  );
+}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-main);
+      color: var(--dark);
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 30px;
+      box-shadow: 0 6px 20px rgba(28,12,56,0.25);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header .left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+    .exchange-room {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      max-width: 1300px;
+      margin: 40px auto;
+      background: var(--card-bg);
+      border-radius: 18px;
+      box-shadow: 0 10px 40px rgba(59,130,246,0.15);
+      overflow: hidden;
+    }
+
+    .main {
+      padding: 30px;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .side {
+      background: #f8fafc;
+      padding: 30px;
+    }
+
+    /* Chat */
+    .chat-box {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .chat-messages::-webkit-scrollbar { display: none; }
+
+    .chat-bubble {
+      margin: 8px 0;
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      animation: popIn 0.3s ease;
+    }
+
+    .chat-bubble.user {
+      background: var(--gradient);
+      color: white;
+      align-self: flex-end;
+    }
+
+    .chat-bubble.other {
+      background: #e2e8f0;
+      color: var(--dark);
+      align-self: flex-start;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: none;
+      padding: 14px;
+      font-size: 0.9rem;
+    }
+
+    .chat-input button {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      padding: 0 20px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s, opacity 0.3s;
+    }
+    .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--blue);
+      color: var(--blue);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .btn-outline:hover {
+      background: rgba(59,130,246,0.1);
+    }
+
+    /* Scheduler */
+    .scheduler {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    .scheduler input {
+      width: 100%;
+      margin: 6px 0 12px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* Review Popup */
+    .popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+.popup-backdrop.open {
+  display: flex;
+}
+
+.popup-card {
+  background: white;
+  border-radius: 18px;
+  padding: 28px 26px;
+  text-align: center;
+  width: 92%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  animation: fadeIn 0.25s ease-out;
+  box-shadow: 0 20px 50px rgba(28,12,56,0.35);
+}
+/* ===============================
+   SETUP EXCHANGE POPUP FIX
+================================ */
+
+.setup-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+}
+
+.setup-popup h3 {
+  margin-bottom: 10px;
+}
+
+.setup-popup input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* Group date + time nicely */
+.setup-popup input[type="date"],
+.setup-popup input[type="time"] {
+  width: 100%;
+}
+
+/* Button alignment */
+.setup-popup .btn {
+  margin-top: 10px;
+  align-self: center;
+  padding: 12px 26px;
+}
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .stars span {
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #cbd5e1;
+      transition: 0.3s;
+    }
+
+    .stars span.active {
+      color: var(--blue);
+      transform: scale(1.3);
+    }
+
+    /* Floating Reminder */
+    .floating-reminder {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: var(--gradient);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 50px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      animation: float 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes float {
+      from { transform: translateY(0); }
+      to { transform: translateY(-6px); }
+    }
+
+    /* Video Modal */
+    #videoModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      backdrop-filter: blur(8px);
+    }
+
+    #videoModal.open { display: flex; }
+
+    .video-frame {
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      width: 80%;
+      height: 70vh;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .video-frame h2 { margin-top: 40px; }
+
+    /* Animate stars */
+.stars span {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #d1d5db;
+  transition: color 0.2s, transform 0.2s;
+}
+.stars span.active {
+  color: var(--blue);
+  transform: scale(1.3);
+}
+
+/* Submit button glow effect */
+.btn.glow {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+}
+
+/* Toast animation */
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(20px); }
+}
+
+.btn.glow {
+  box-shadow: 0 0 15px rgba(6,182,212,0.7);
+  transform: scale(1.05);
+}
+
+@keyframes bounceSuccess {
+  0% { transform: scale(1); background: var(--teal); }
+  30% { transform: scale(1.1); background: #34d399; }
+  60% { transform: scale(0.95); background: #10b981; }
+  100% { transform: scale(1); background: var(--teal); }
+}
+
+.success-bounce {
+  animation: bounceSuccess 0.6s ease-in-out;
+}
+.back-btn {
+  background: transparent;
+  border: 2px solid var(--blue);
+  color: var(--blue);
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+  margin: 15px;
+  box-shadow: 0 0 10px rgba(59,130,246,0.2);
+}
+.back-btn:hover {
+  background: var(--blue);
+  color: white;
+  transform: translateX(-4px);
+  box-shadow: 0 0 15px rgba(59,130,246,0.4);
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  width: 320px;
+}
+
+/* ===== Partner dropdown same style as inputs ===== */
+
+.setup-popup select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  background: white;
+  color: var(--text-dark);
+  appearance: none;
+  cursor: pointer;
+}
+
+/* dropdown arrow */
+.setup-popup select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B6785' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+/* focus effect like other inputs */
+.setup-popup select:focus {
+  outline: none;
+  border-color: var(--violet-500);
+  box-shadow: 0 0 0 2px rgba(116,95,141,0.2);
+}
+
+.setup-popup select::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+/* CUSTOM PARTNER SELECT */
+
+.custom-select{
+  position:relative;
+  width:100%;
+  font-family:'Inter',sans-serif;
+}
+
+.select-display{
+  width:100%;
+  padding:10px 12px;
+
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  background:white;
+
+  font-size:0.9rem;
+  font-family:'Inter',sans-serif;
+
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+
+  cursor:pointer;
+
+  box-sizing:border-box; /* fixes size mismatch */
+
+  height:40px; /* same height as other inputs */
+  color:#6B6785;
+}
+
+.setup-popup input,
+.setup-popup select,
+.select-display{
+  box-sizing:border-box;
+  height:40px;
+}
+
+.select-options{
+  position:absolute;
+  top:110%;
+  left:0;
+  width:100%;
+  background:white;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+  max-height:120px;   /* 👈 only 3 users visible */
+  overflow-y:auto;
+
+  display:none;
+  z-index:50;
+}
+
+/* option style */
+
+.select-option{
+  padding:10px 12px;
+  cursor:pointer;
+  text-align:left;
+  font-family:'Inter', sans-serif;
+  font-size:0.9rem;
+}
+
+
+.select-display::after{
+  content:"⌄";
+  margin-left:auto;
+  font-size:14px;
+  color:#6B6785;
+}
+.select-option:hover{
+  background:#f3f1fb;
+}
+
+/* invisible scrollbar */
+
+.select-options::-webkit-scrollbar{
+  width:0px;
+}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="left">
+     <button id="backBtn" class="back-btn">← Back</button>
+  <h2>SkillSwap – Exchange Room</h2>
+  <h3 id="exchangeSkills"></h3>
+<div id="exchangeSchedule"></div>
+
+  </header>
+
+  <div class="exchange-room">
+    <div class="main">
+      <h3>💬 Chat & Collaboration</h3>
+      <div class="chat-box">
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+          <input id="chatInput" type="text" placeholder="Type a message..." />
+          <button id="sendMsgBtn">Send</button>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+  <button class="btn" id="joinCallBtn">🎥 Join Video Call</button>
+  <button class="btn" id="shareRoomBtn">🔗 Share Room</button>
+  <button class="btn-outline" id="markCompleteBtn">✅ Mark as Completed</button>
+</div>
+    </div>
+
+    <div class="side">
+      <h4>🗓 Schedule</h4>
+      <div class="scheduler">
+        <label>Date</label>
+        <input type="date" id="sessionDate" />
+        <label>Time</label>
+        <input type="time" id="sessionTime" />
+        <button class="btn" id="saveScheduleBtn">💾 Save / Reschedule</button>
+      </div>
+      <h4>⏰ Countdown</h4>
+      <p id="countdown">Session in: --</p>
+    </div>
+  </div>
+
+  <div class="popup-backdrop" id="reviewPopup">
+  <div class="popup-card">
+    <h3>⭐ Rate Your Exchange</h3>
+
+    <p style="font-size:14px;color:#6B6785;margin-bottom:10px">
+      How was your experience with this user?
+    </p>
+
+    <div class="stars" id="stars">
+      <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+    </div>
+
+    <textarea
+      id="reviewText"
+      rows="3"
+      placeholder="Share how the session went (optional feedback)..."
+      style="width:100%;margin-top:12px;"
+    ></textarea>
+
+    <div style="margin-top:14px;padding:10px;border-radius:12px;background:#f5f3fb;font-size:13px;color:#5a4d7a">
+      ⚠️ <strong>Safety Notice:</strong><br/>
+      If you experienced any inconvenience, misconduct, or inappropriate behavior during this exchange,
+      please report the user from their profile or the Report section.  
+      Our team will review your report and take appropriate action to ensure a safe learning environment.
+    </div>
+
+    <div style="margin-top:20px;">
+      <button class="btn" id="submitReviewBtn">Submit Rating</button>
+      <button class="btn-outline" id="closeReviewBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+  <div id="videoModal">
+    <div class="video-frame">
+      <h2>🎥 Video Call Active</h2>
+      <p>You're now connected with your partner. Share ideas and resources!</p>
+      <div id="callTimer">00:00</div>
+      <button class="btn-outline" id="endCallBtn">End Call</button>
+    </div>
+  </div>
+
+  <div class="popup-backdrop open" id="exchangeSetup">
+  <div class="popup-card setup-popup">
+    <h3>🤝 Setup Exchange</h3>
+
+    <input id="skillA" placeholder="Skill you teach" />
+    <input id="skillB" placeholder="Skill you learn" />
+    <div class="custom-select" id="partnerSelect">
+  <div class="select-display">Select partner</div>
+  <div class="select-options" id="partnerOptions"></div>
+</div>
+    <input type="date" id="exchangeDate" />
+    <input type="time" id="exchangeTime" />
+
+    <button class="btn" onclick="createExchange()">Start Exchange</button>
+  </div>
+</div>
+<!-- SHARE MODAL -->
+<div class="modal" id="shareModal">
+  <div class="modal-content" style="width:360px;">
+    <h3>Share with</h3>
+    <div id="userList" style="max-height:260px;overflow-y:auto;"></div>
+  </div>
+</div>
+<script>
+let users = [];
+
+async function loadUsersForShare() {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/chat/conversations/", {
+      credentials: "include"
+    });
+
+    if (!res.ok) throw new Error();
+
+    users = await res.json();
+  } catch (e) {
+    console.error("Failed loading users", e);
+    users = [];
+  }
+}
+document.getElementById("shareRoomBtn").onclick = () => {
+  const exchange = JSON.parse(localStorage.getItem("activeExchange"));
+  if (!exchange) return alert("No active exchange");
+
+  shareExchangeRoom(exchange.id);
+};
+document.getElementById("shareModal").onclick = e => {
+  if (e.target.id === "shareModal") {
+    e.target.style.display = "none";
+  }
+};
+  function shareExchangeRoom(exchangeId) {
+  activeShareExchange = exchangeId;
+
+  const list = document.getElementById("userList");
+  list.innerHTML = "";
+
+  users.forEach(u => {
+    list.innerHTML += `
+      <div 
+        style="
+          padding:10px 12px;
+          margin-bottom:8px;
+          border-radius:12px;
+          border:1px solid #eee;
+          cursor:pointer;
+          transition:0.2s;
+          display:flex;
+          align-items:center;
+          gap:8px;
+        "
+        onmouseover="this.style.background='#f3f1fb'"
+        onmouseout="this.style.background='white'"
+        onclick="sendExchange(${u.id})"
+      >
+        👤 <strong>${u.name}</strong>
+      </div>
+    `;
+  });
+
+  document.getElementById("shareModal").style.display = "flex";
+}
+let activeShareExchange = null;
+
+async function sendExchange(userId) {
+  try {
+    const exchange = JSON.parse(localStorage.getItem("activeExchange"));
+    if (!exchange) return alert("No active exchange");
+
+    const link = `${window.location.origin}/exchange.html?exchange_id=${exchange.id}`;
+
+    const res = await fetch(`http://127.0.0.1:8000/api/chat/${userId}/send/`, {
+  method: "POST",
+  credentials: "include",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    content: "Shared an exchange",
+    exchange_id: exchange.id
+  })
+});
+
+    if (!res.ok) return alert("Share failed");
+
+    localStorage.setItem("openChatUser", userId);
+    window.location.href = "messages.html";
+
+  } catch (e) {
+    console.error(e);
+  }
+}
+  function getExchangeIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("exchange_id");
+}
+const SKILLSWAP_STATE = JSON.parse(localStorage.getItem("skillswap_state") || "{}");
+if (!window.GLOBAL_STATE) {
+  window.GLOBAL_STATE = {};
+}
+if (SKILLSWAP_STATE.user) {
+  GLOBAL_STATE.user = SKILLSWAP_STATE.user;
+} else {
+  alert("User not logged in. Please login again.");
+  window.location.href = "login.html";
+}
+// ===============================
+// DOM REFERENCES (IMPORTANT FIX)
+// ===============================
+const skillA = document.getElementById("skillA");
+const skillB = document.getElementById("skillB");
+const exchangeDate = document.getElementById("exchangeDate");
+const exchangeTime = document.getElementById("exchangeTime");
+
+// ===============================
+// SEND MESSAGE (CHAT -> BACKEND)
+// ===============================
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
+
+document.getElementById('sendMsgBtn').onclick = async () => {
+  const msg = chatInput.value.trim();
+  if (!msg) return;
+
+  try {
+    const exchange = JSON.parse(localStorage.getItem("activeExchange"));
+    if (!exchange) return alert("No active exchange found");
+
+    const res = await fetch("http://127.0.0.1:8000/api/exchange/message/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        exchange_id: exchange.id,
+        sender_id: GLOBAL_STATE.user.id,
+        message: msg
+      })
+    });
+
+    if (!res.ok) return alert("Failed to send message");
+
+    chatInput.value = '';
+    await loadExchangeMessages();   // 🔥 reload messages from backend
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error while sending message");
+  }
+};
+let exchangeChatInterval = null;
+
+
+async function loadExchangeMessages() {
+  try {
+    const raw = localStorage.getItem("activeExchange");
+    if (!raw) return;
+
+    const exchange = JSON.parse(raw);
+    if (!exchange || !exchange.id) return;
+
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/exchange/${exchange.id}/messages/`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    renderExchangeMessages(data);
+
+  } catch (err) {
+    console.error("❌ Load exchange messages failed:", err);
+  }
+}
+
+let lastMessageCount = 0;
+
+function renderExchangeMessages(messages) {
+  const chatMessages = document.getElementById("chatMessages");
+  const currentUserId = GLOBAL_STATE.user.id;
+
+  if (!Array.isArray(messages)) return;
+
+  // If same number → do nothing
+  if (messages.length === lastMessageCount) return;
+
+  // Append only new ones
+  for (let i = lastMessageCount; i < messages.length; i++) {
+    const m = messages[i];
+
+    const bubble = document.createElement("div");
+    bubble.className =
+      "chat-bubble " +
+      (Number(m.sender_id) === Number(currentUserId)
+        ? "user"
+        : "other");
+
+    bubble.textContent = m.message;
+    chatMessages.appendChild(bubble);
+  }
+
+  lastMessageCount = messages.length;
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function startExchangeChatLive() {
+  if (exchangeChatInterval) clearInterval(exchangeChatInterval);
+
+  exchangeChatInterval = setInterval(loadExchangeMessages, 2000); // every 2s
+}
+// ===============================
+// REVIEW POPUP
+// ===============================
+const reviewPopup = document.getElementById('reviewPopup');
+const stars = document.querySelectorAll('#stars span');
+const submitReviewBtn = document.getElementById('submitReviewBtn');
+const closeReviewBtn = document.getElementById('closeReviewBtn');
+const reviewText = document.getElementById('reviewText');
+
+// Open popup
+document.getElementById('markCompleteBtn').onclick = async () => {
+  const exchange = JSON.parse(localStorage.getItem("activeExchange"));
+
+  if (!exchange) {
+    alert("No active exchange found");
+    return;
+  }
+
+  const success = await completeExchangeFromRoom(exchange);
+
+  if (!success) {
+    alert("Server error while completing exchange");
+    return; // ⛔ STOP HERE
+  }
+
+  reviewPopup.classList.add('open'); // ✅ only opens if success
+  confetti();
+};
+
+// Close popup
+closeReviewBtn.onclick = () => reviewPopup.classList.remove('open');
+
+// Star animation (fill effect)
+stars.forEach((star, idx) => {
+  star.innerHTML = '☆';
+  star.addEventListener('click', () => {
+    stars.forEach(s => {
+      s.classList.remove('active');
+      s.innerHTML = '☆';
+    });
+    for (let i = 0; i <= idx; i++) {
+      stars[i].classList.add('active');
+      stars[i].innerHTML = '★';
+      stars[i].style.transform = 'scale(1.4)';
+      setTimeout(() => stars[i].style.transform = 'scale(1)', 200);
+    }
+  });
+});
+
+// ===============================
+// SUBMIT REVIEW (RATING -> BACKEND)
+// ===============================
+submitReviewBtn.onclick = async () => {
+  const rating = [...stars].filter(s => s.classList.contains('active')).length;
+  const feedback = reviewText.value.trim();
+
+  if (!rating) {
+    alert("Please select a rating");
+    return;
+  }
+
+  try {
+    const exchange = JSON.parse(localStorage.getItem("activeExchange"));
+    if (!exchange) {
+      alert("No active exchange found");
+      return;
+    }
+
+    const res = await fetch("http://127.0.0.1:8000/api/exchange/review/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        exchange_id: exchange.id,
+        reviewer_id: GLOBAL_STATE.user.id,
+        rating: rating,
+        feedback: feedback
+      })
+    });
+
+    if (!res.ok) {
+      alert("Failed to submit review");
+      return;
+    }
+
+    reviewPopup.classList.remove('open');
+    reviewText.value = '';
+    stars.forEach(s => {
+      s.classList.remove('active');
+      s.innerHTML = '☆';
+    });
+
+    showToast(`⭐ Thank you for your ${rating}-star feedback!`);
+    submitReviewBtn.classList.add('glow');
+    setTimeout(() => submitReviewBtn.classList.remove('glow'), 1000);
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error while submitting review");
+  }
+};
+
+// ===============================
+// TOAST MESSAGE
+// ===============================
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.textContent = message;
+  toast.style.position = 'fixed';
+  toast.style.bottom = '30px';
+  toast.style.right = '30px';
+  toast.style.background = 'linear-gradient(135deg, var(--violet-700), var(--violet-500))';
+  toast.style.color = 'white';
+  toast.style.padding = '12px 20px';
+  toast.style.borderRadius = '10px';
+  toast.style.fontWeight = '600';
+  toast.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+  toast.style.animation = 'fadeSlide 0.5s ease-out, fadeOut 0.5s ease-in 3s forwards';
+
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+// ===============================
+// GOOGLE MEET + SMART TIMER
+// ===============================
+let meetTimerInterval = null;
+let callStartTime = null;
+
+document.getElementById('joinCallBtn').onclick = () => {
+  // Save the start time
+  callStartTime = new Date();
+  document.getElementById('callTimer').textContent = "🟢 Call in progress...";
+
+  // Open Google Meet in new tab
+  const meetWindow = window.open("https://meet.google.com/new", "_blank");
+
+  // Start timer
+  startMeetTimer();
+
+  // Detect when user closes the Meet tab
+  const checkClosed = setInterval(() => {
+    if (meetWindow.closed) {
+      clearInterval(checkClosed);
+      stopMeetTimer();
+    }
+  }, 1000);
+};
+
+// === Timer starts when user joins ===
+function startMeetTimer() {
+  clearInterval(meetTimerInterval);
+
+  let seconds = 0;
+  const display = document.getElementById('callTimer');
+
+  meetTimerInterval = setInterval(() => {
+    seconds++;
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+    display.textContent = `🕒 Call Duration: ${m}:${s}`;
+  }, 1000);
+}
+
+// === Timer stops when user closes the Meet tab ===
+function stopMeetTimer() {
+  if (!meetTimerInterval || !callStartTime) return;
+
+  clearInterval(meetTimerInterval);
+  meetTimerInterval = null;
+
+  const endTime = new Date();
+  const duration = Math.floor((endTime - callStartTime) / 1000);
+
+  const m = String(Math.floor(duration / 60)).padStart(2, '0');
+  const s = String(duration % 60).padStart(2, '0');
+
+  const display = document.getElementById('callTimer');
+  display.textContent = `Call Ended — Duration: ${m}:${s}`;
+  display.style.color = "var(--teal)";
+}
+
+// ===============================
+// SCHEDULE SAVE / RESCHEDULE
+// ===============================
+const saveScheduleBtn = document.getElementById('saveScheduleBtn');
+
+saveScheduleBtn.onclick = () => {
+
+  const date = document.getElementById('sessionDate').value;
+  const time = document.getElementById('sessionTime').value;
+
+  if (!date || !time) {
+    showToast('⚠️ Please select both date and time');
+    return;
+  }
+
+  // update exchange object
+  const exchange = JSON.parse(localStorage.getItem("activeExchange") || "{}");
+
+  exchange.date = date;
+  exchange.time = time;
+
+  localStorage.setItem("activeExchange", JSON.stringify(exchange));
+
+  // save session time
+  localStorage.setItem("nextSession", JSON.stringify({ date, time }));
+
+  showToast(`✅ Session scheduled for ${date} at ${time}`);
+
+  hydrateExchangeRoom();
+
+  startCountdown();
+};
+
+// ===============================
+// BACK TO DASHBOARD
+// ===============================
+document.getElementById('backBtn').addEventListener('click', () => {
+  window.location.href = 'dashboard.html';
+});
+
+// ===============================
+// COUNTDOWN TIMER (CLEAN + CORRECT)
+// ===============================
+let countdownTimer = null;
+
+function startCountdown() {
+
+  const countdownEl = document.getElementById("countdown");
+  const data = JSON.parse(localStorage.getItem("nextSession") || "{}");
+
+  if (!data.date || !data.time) {
+    countdownEl.textContent = "No session scheduled yet.";
+    countdownEl.style.color = "var(--text-muted)";
+    return;
+  }
+
+  const sessionDate = new Date(`${data.date}T${data.time}:00`);
+
+  clearInterval(countdownTimer);
+
+  function updateCountdown() {
+
+    const now = new Date();
+    const diff = sessionDate - now;
+
+    if (diff > 0) {
+
+      const hrs = Math.floor(diff / 1000 / 60 / 60);
+      const mins = Math.floor((diff / 1000 / 60) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      countdownEl.textContent =
+        `Session starts in: ${hrs}h ${mins}m ${secs}s`;
+
+      countdownEl.style.color = "var(--blue)";
+      return;
+    }
+
+    if (diff <= 0 && diff > -7200000) {
+
+      countdownEl.textContent = "🟢 Session live";
+      countdownEl.style.color = "var(--success)";
+      return;
+    }
+
+    countdownEl.textContent = "✔ Session completed";
+    countdownEl.style.color = "var(--text-muted)";
+    clearInterval(countdownTimer);
+  }
+
+  updateCountdown();
+  countdownTimer = setInterval(updateCountdown, 1000);
+}
+
+async function loadExchangeFromBackend(exchangeId) {
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/exchange/${exchangeId}/`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      alert("Exchange not found");
+      return;
+    }
+
+    const data = await res.json();
+
+    localStorage.setItem("activeExchange", JSON.stringify(data));
+
+    
+
+  } catch (err) {
+    console.error("Failed to load exchange:", err);
+  }
+}
+// ===============================
+// PAGE LOAD INIT
+// ===============================
+// ===============================
+// CONFETTI 🎉
+// ===============================
+function confetti() {
+  for (let i = 0; i < 25; i++) {
+    const piece = document.createElement('div');
+    piece.style.position = 'fixed';
+    piece.style.width = '8px';
+    piece.style.height = '8px';
+    piece.style.borderRadius = '50%';
+    piece.style.background = `hsl(${Math.random() * 360},70%,60%)`;
+    piece.style.top = '50%';
+    piece.style.left = '50%';
+    piece.style.transition = '1.5s ease-out';
+
+    document.body.appendChild(piece);
+
+    setTimeout(() => {
+      piece.style.transform = `translate(${(Math.random() - 0.5) * 400}px, ${(Math.random() - 0.5) * 400}px)`;
+      piece.style.opacity = 0;
+    }, 50);
+
+    setTimeout(() => piece.remove(), 1600);
+  }
+}
+// ===============================
+// CREATE EXCHANGE (FRONTEND -> BACKEND)
+// ===============================
+async function createExchange() {
+  try {
+    if (!skillA || !skillB || !exchangeDate || !exchangeTime) {
+      alert("Exchange form elements not found in DOM");
+      return;
+    }
+
+    if (!skillA.value || !skillB.value || !exchangeDate.value || !exchangeTime.value) {
+      alert("Please fill all exchange details");
+      return;
+    }
+
+    const payload = {
+      user_a: GLOBAL_STATE.user.id,
+      user_b: document.querySelector(".select-display").dataset.value,
+      skill_a: skillA.value.trim(),
+      skill_b: skillB.value.trim(),
+      date: exchangeDate.value,
+      time: exchangeTime.value
+    };
+
+    const res = await fetch("http://127.0.0.1:8000/api/exchange/create/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      alert(data.error || "Failed to create exchange");
+      return;
+    }
+
+    // ✅ Save exchange
+    localStorage.setItem("activeExchange", JSON.stringify({
+      id: data.id,
+      ...payload
+    }));
+
+    // ✅ Save schedule for countdown
+    localStorage.setItem("nextSession", JSON.stringify({
+      date: payload.date,
+      time: payload.time
+    }));
+
+    // ✅ Close popup safely
+    const setupPopup = document.getElementById("exchangeSetup");
+    if (setupPopup) setupPopup.classList.remove("open");
+
+    // ✅ Update UI
+    hydrateExchangeRoom();
+    if (typeof startCountdown === "function") {
+      startCountdown();
+    }
+
+    alert("✅ Exchange started successfully!");
+
+  } catch (err) {
+    console.error("❌ Create exchange error:", err);
+    alert("Server error while creating exchange");
+  }
+}
+
+// ===============================
+// HYDRATE EXCHANGE ROOM (UI BINDING)
+// ===============================
+function hydrateExchangeRoom() {
+  const exRaw = localStorage.getItem("activeExchange");
+  if (!exRaw) return;
+
+  let ex;
+  try {
+    ex = JSON.parse(exRaw);
+  } catch {
+    console.error("Corrupted activeExchange");
+    return;
+  }
+
+  const skillsEl = document.getElementById("exchangeSkills");
+  const scheduleEl = document.getElementById("exchangeSchedule");
+  const sessionDateEl = document.getElementById("sessionDate");
+  const sessionTimeEl = document.getElementById("sessionTime");
+
+  const skillA = ex.skill_a || ex.skillA || ex.title || "Skill A";
+  const skillB = ex.skill_b || ex.skillB || "Skill B";
+
+  if (skillsEl) {
+    skillsEl.textContent = `🎓 ${skillA} ↔️ ${skillB}`;
+  }
+
+  if (scheduleEl) {
+    scheduleEl.innerHTML =
+      `<strong>Scheduled:</strong> ${ex.date || "--"} – ${ex.time || "--"}`;
+  }
+
+  if (sessionDateEl) sessionDateEl.value = ex.date || "";
+  if (sessionTimeEl) sessionTimeEl.value = ex.time || "";
+  localStorage.setItem(
+  "nextSession",
+  JSON.stringify({
+    date: ex.date,
+    time: ex.time
+  })
+);
+}
+// ===============================
+// COMPLETE EXCHANGE (BACKEND + UI UPDATE + DASHBOARD NOTIFY)
+// ===============================
+async function completeExchangeFromRoom(exchange) {
+  try {
+    if (!exchange || !exchange.id) {
+      console.error("❌ Invalid exchange object:", exchange);
+      return false;
+    }
+
+    const userId = GLOBAL_STATE?.user?.id;
+    if (!userId) {
+      console.error("❌ User not found in GLOBAL_STATE");
+      return false;
+    }
+
+    // 1️⃣ Mark exchange as completed in backend
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/exchange/${exchange.id}/complete/`,
+      { method: "POST", credentials: "include" }
+    );
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("❌ Exchange completion failed:", err);
+      return false;
+    }
+
+    // 2️⃣ Create activity for dashboard
+    await fetch("http://127.0.0.1:8000/api/activities/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: userId,
+        text: `Completed exchange: ${exchange.skill_a || exchange.skillA} ↔ ${exchange.skill_b || exchange.skillB}`
+      })
+    });
+
+    // 3️⃣ Create event for dashboard (THIS WAS BREAKING YOUR PAGE)
+    await fetch("http://127.0.0.1:8000/api/events/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: userId,
+        title: `Exchange completed: ${exchange.skill_a || exchange.skillA} ↔ ${exchange.skill_b || exchange.skillB}`,
+        type: "exchange",
+        date: new Date().toISOString().split("T")[0],
+        completed: true
+      })
+    });
+
+    // 4️⃣ Update Exchange Room UI
+    const countdownEl = document.getElementById("countdown");
+    if (countdownEl) {
+      countdownEl.textContent = "✔ Session completed";
+      countdownEl.style.color = "var(--text-muted)";
+    }
+
+    const joinBtn = document.getElementById("joinCallBtn");
+    if (joinBtn) {
+      joinBtn.disabled = true;
+      joinBtn.textContent = "Session Ended";
+      joinBtn.style.opacity = "0.6";
+      joinBtn.style.cursor = "not-allowed";
+    }
+
+    // ✅ Tell dashboard to refresh next time it opens
+    localStorage.setItem("forceDashboardRefresh", "1");
+
+    console.log("✅ Exchange completed & dashboard notified");
+    return true;
+
+  } catch (err) {
+    console.error("❌ Complete exchange error:", err);
+    return false;
+  }
+}
+
+
+async function loadUsersForExchange(){
+
+  const res = await fetch("http://127.0.0.1:8000/api/connect/people/");
+  const users = await res.json();
+
+  const options = document.getElementById("partnerOptions");
+  const display = document.querySelector(".select-display");
+
+  users.forEach(u=>{
+
+    if(u.id === GLOBAL_STATE.user.id) return;
+
+    const div = document.createElement("div");
+    div.className = "select-option";
+    div.textContent = u.name;
+
+    div.onclick = ()=>{
+      display.textContent = u.name;
+      display.dataset.value = u.id;
+      options.style.display = "none";
+    };
+
+    options.appendChild(div);
+
+  });
+
+}
+
+const selectBox = document.getElementById("partnerSelect");
+const optionsBox = document.getElementById("partnerOptions");
+
+selectBox.onclick = ()=>{
+  optionsBox.style.display =
+    optionsBox.style.display === "block" ? "none" : "block";
+};
+
+document.addEventListener("click",e=>{
+  if(!selectBox.contains(e.target)){
+    optionsBox.style.display="none";
+  }
+});
+
+window.addEventListener('DOMContentLoaded', async () => {
+
+  await loadUsersForExchange();
+
+});
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const exchangeId = getExchangeIdFromURL();
+
+  if (exchangeId) {
+    await loadExchangeFromBackend(exchangeId);
+  }
+
+  await loadUsersForShare();   // 🔥 ADD THIS
+
+  startCountdown();
+  loadExchangeMessages();
+  startExchangeChatLive();
+});
+  </script>
+</body>
+</html>

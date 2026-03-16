@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSwap Dashboard</title>
+<style>
+    /* =========================================================
+   ROOT VARIABLES
+   App color system & semantic tokens
+========================================================= */
+:root {
+  /* Violet scale */
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  /* Base colors */
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+
+  /* Semantic accents */
+  --success:#5CB8A6;
+  --study:#8B6DEB;
+  --exchange:#5C8DFF;
+  --reminder:#F2B705;
+  --roadmap:#5CB8A6;
+  --completed:#9CA3AF;
+}
+
+/* =========================================================
+   DARK MODE OVERRIDES
+========================================================= */
+body.dark {
+  --bg-main:#141021;
+  --white:#1E1A2E;
+  --text-dark:#F4F2FA;
+  --text-muted:#B6AEDC;
+}
+
+/* =========================================================
+   GLOBAL RESET & BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+  width: 80px;
+  background: var(--violet-900);
+  padding: 20px 12px;
+  transition: width 0.35s ease;
+}
+
+.sidebar:hover { width: 230px; }
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.sidebar:hover .brand { opacity: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+
+.nav-item .label { opacity: 0; }
+.sidebar:hover .label { opacity: 1; }
+
+
+/* =========================================================
+   MAIN CONTENT AREA
+========================================================= */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   BANNER / HERO
+========================================================= */
+.banner {
+  background: linear-gradient(
+    135deg,
+    var(--violet-700),
+    var(--violet-500)
+  );
+  color: white;
+  padding: 30px;
+  border-radius: 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideIn 0.6s ease;
+}
+
+.banner h1 {
+  margin: 0;
+}
+
+.banner-actions button {
+  margin-left: 10px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+.btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: white;
+  color: var(--violet-900);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* =========================================================
+   GRID LAYOUT
+========================================================= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 30px;
+  align-items: stretch;
+}
+
+/* recommaned grid */
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   CARD BASE
+========================================================= */
+.card {
+  background: var(--white);
+  padding: 22px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(28,12,56,0.08);
+  transition: 0.3s;
+  animation: fadeUp 0.6s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* hide scrollbar but keep scrolling */
+#savedRoadmaps,
+#skillTimeline {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 6px;
+
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE / Edge */
+}
+
+/* Chrome / Safari */
+#savedRoadmaps::-webkit-scrollbar,
+#skillTimeline::-webkit-scrollbar {
+  display: none;
+}
+.card:hover #savedRoadmaps::-webkit-scrollbar,
+.card:hover #skillTimeline::-webkit-scrollbar {
+  width:4px;
+}
+#savedRoadmaps::-webkit-scrollbar-thumb,
+#skillTimeline::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 10px;
+}
+/* recommends */
+.card > h3 {
+  margin-bottom: 14px;
+}
+
+.card > div {
+  margin-top: 6px;
+}
+/* the others */
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(28,12,56,0.15);
+}
+
+/* =========================================================
+   CARD STATES
+========================================================= */
+.card.locked {
+  background: linear-gradient(
+    180deg,
+    var(--white),
+    rgba(0,0,0,0.02)
+  );
+}
+
+/* =========================================================
+   ACTIVITY TEXT
+========================================================= */
+.activity {
+  font-size: 14px;
+  margin-top: 10px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
+.progress {
+  height: 10px;
+  background: var(--violet-100);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress span {
+  height: 100%;
+  display: block;
+  background: var(--success);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 26px;
+  border-radius: 20px;
+  width: 340px;
+  animation: scaleIn 0.4s ease;
+}
+
+.modal-close {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   TOAST NOTIFICATION
+========================================================= */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--violet-900);
+  color: white;
+  padding: 14px 20px;
+  border-radius: 14px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.4s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =========================================================
+   MICRO FEEDBACK / ANIMATIONS
+========================================================= */
+.pulse {
+  animation: pulse 0.35s ease;
+}
+
+.flash-success {
+  animation: flashSuccess 0.6s ease;
+}
+
+.glow {
+  animation: glow 0.6s ease;
+}
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+#calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--violet-100);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.calendar-day:hover {
+  transform: scale(1.05);
+}
+
+.calendar-day.today {
+  outline: 3px solid var(--violet-700);
+  font-weight: 700;
+}
+
+.calendar-day.study     { background: var(--study); color: white; }
+.calendar-day.exchange  { background: var(--exchange); color: white; }
+.calendar-day.reminder  { background: var(--reminder); color: #1F1F2E; }
+.calendar-day.roadmap   { background: var(--roadmap); color: white; }
+
+.calendar-day.completed {
+  background: var(--completed) !important;
+  color: white;
+  opacity: 0.75;
+}
+
+.calendar-nav-btn {
+  background: var(--violet-500);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.calendar-nav-btn:hover {
+  background: var(--violet-700);
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   ROADMAP STATES
+========================================================= */
+.roadmap.completed {
+  opacity: 0.6;
+}
+
+.roadmap.upcoming {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.roadmap.active {
+  border-left: 4px solid var(--success);
+  padding-left: 10px;
+}
+
+/* =========================================================
+   SKILL TIMELINE
+========================================================= */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--violet-300);
+}
+
+.timeline-item.active::before    { background: var(--success); }
+.timeline-item.completed::before { background: var(--text-muted); }
+.timeline-item.upcoming::before  { background: var(--violet-500); }
+
+.timeline-item span {
+  font-weight: 600;
+}
+
+.timeline-item small {
+  display: block;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes flashSuccess {
+  0%   { background-color: var(--success); }
+  100% { background-color: inherit; }
+}
+
+@keyframes glow {
+  0%   { box-shadow: 0 0 0 rgba(92,184,166,0.6); }
+  100% { box-shadow: 0 0 18px rgba(92,184,166,0); }
+}
+/* =========================================================
+for anchor tag
+========================================================= */
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+</style>
+<script src="theme.js"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">SkillSwap</div>
+
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item active">
+      🏠 <span class="label">Dashboard</span>
+    </div>
+  </a>
+
+  <a href="explore.html" class="nav-link">
+    <div class="nav-item">
+      🌍 <span class="label">Explore</span>
+    </div>
+  </a>
+
+  <a href="connect.html" class="nav-link">
+    <div class="nav-item">
+      🤝 <span class="label">Connect</span>
+    </div>
+  </a>
+
+  <a href="messages.html" class="nav-link">
+    <div class="nav-item ">
+      💬 <span class="label">Messages</span>
+    </div>
+  </a>
+
+  <a href="progress.html" class="nav-link">
+    <div class="nav-item">
+      📊 <span class="label">Progress</span>
+    </div>
+  </a>
+
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      👤 <span class="label">Profile</span>
+    </div>
+  </a>
+</div>
+<!-- ======================================================
+     MAIN CONTENT
+====================================================== -->
+<div class="main">
+
+  <!-- ====================================================
+       BANNER / CONTEXT
+  ===================================================== -->
+  <div class="banner">
+    <div>
+      <h1 id="welcomeName">Hi 👋</h1>
+      <p id="bannerMessage" style="opacity:0.9;"></p>
+    </div>
+
+    <div class="banner-actions">
+      <button class="btn btn-primary" onclick="openModal('offer')">
+        Offer Skill
+      </button>
+      <button class="btn btn-secondary" onclick="openModal('request')">
+        Request Skill
+      </button>
+      <button class="btn btn-secondary" onclick="openModal('ai')">
+        Self Study
+      </button>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       DASHBOARD GRID
+  ===================================================== -->
+  <div class="grid">
+
+    <!-- ===== TODAY / CONTEXT ===== -->
+    <div class="card">
+      <h3>Today’s Focus</h3>
+      <div id="todayFocus"></div>
+    </div>
+
+    <!-- ===== RECENT ACTIVITY ===== -->
+    <div class="card">
+      <h3>Recent Activity</h3>
+      <div id="activityFeed"></div>
+    </div>
+
+    <!-- ===== APPEARANCE / PREFERENCE ===== -->
+    <div class="card">
+      <h3>Appearance</h3>
+      <div class="activity">Theme preference</div>
+      <div class="toggle" onclick="toggleTheme()">
+        🌓 Toggle Dark / Light
+      </div>
+    </div>
+
+    <!-- ===== ROADMAPS ===== -->
+    <div class="card">
+      <h3>My Roadmaps</h3>
+      <div id="savedRoadmaps"></div>
+    </div>
+
+    <!-- ===== SKILL JOURNEY (TIMELINE) ===== -->
+    <div class="card">
+      <h3>Skill Journey</h3>
+      <div id="skillTimeline"></div>
+    </div>
+
+    <!-- ===== SKILL EXCHANGES ===== -->
+    <div class="card">
+      <h3>Skill Exchanges</h3>
+      <div id="exchangeStats"></div>
+    </div>
+
+    <!-- ===== SKILL COMPARISON ===== -->
+    <div class="card">
+      <h3>Skill Comparison</h3>
+      <div id="skillComparison"></div>
+    </div>
+
+    <!-- ===== WEEKLY REFLECTION ===== -->
+    <div class="card">
+      <h3>Weekly Reflection</h3>
+      <div id="weeklyReflection"></div>
+    </div>
+
+    <!-- ===== CALENDAR ===== -->
+    <div class="card">
+      <h3>Calendar</h3>
+    <div id="calendarHeader"></div>
+<div id="calendarGrid"></div>
+
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:12px;">
+  <div><span class="calendar-day" style="background:var(--violet-100);padding:4px 8px;border-radius:8px;"></span> Free</div>
+  <div><span class="calendar-day study" style="padding:4px 8px;border-radius:8px;"></span> Study</div>
+  <div><span class="calendar-day exchange" style="padding:4px 8px;border-radius:8px;"></span> Exchange</div>
+  <div><span class="calendar-day reminder" style="padding:4px 8px;border-radius:8px;"></span> Reminder</div>
+  <div><span class="calendar-day roadmap" style="padding:4px 8px;border-radius:8px;"></span> Roadmap</div>
+  <div><span class="calendar-day completed" style="padding:4px 8px;border-radius:8px;"></span> Completed</div>
+</div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================================================
+     MODAL
+====================================================== -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 id="modalTitle"></h3>
+
+    <input
+      placeholder="Enter details"
+      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc"
+    />
+
+    <br><br>
+
+    <button class="btn btn-primary" onclick="closeModal()">
+      Done
+    </button>
+  </div>
+
+  <!-- ===== UNDO ACTION ===== -->
+  <button class="btn btn-secondary" onclick="undoLastAction()">
+    Undo last action
+  </button>
+</div>
+  <!-- ===== ASSESSMENT MODAL ===== -->
+<div class="modal" id="assessmentModal">
+  <div class="modal-content" style="width:420px;">
+    <button class="modal-close" onclick="closeAssessment()">✖</button>
+    <h3 id="assessmentTitle"></h3>
+    <div id="questionBox"></div>
+
+    <div style="display:flex;justify-content:space-between;margin-top:16px;">
+      <button class="btn btn-secondary" onclick="prevQuestion()">Back</button>
+      <button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+    </div>
+  </div>
+</div>
+<!-- ======================================================
+     TOAST
+====================================================== -->
+<div class="toast" id="toast">Updated</div>
+<script>
+
+/* =========================================================
+renders names 
+========================================================= */
+async function renderUserName() {
+  const el = document.getElementById("welcomeName");
+  if (!el) return;
+
+  const GLOBAL_STATE = JSON.parse(localStorage.getItem("skillswap_state")) || {};
+  const user = GLOBAL_STATE.user;
+
+  if (!user) {
+    el.innerText = "Hi 👋";
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+      credentials: "include"
+    });
+
+    if (!res.ok) {
+      const name = user.username || user.email?.split("@")[0] || "there";
+      el.innerText = `Hi, ${name} 👋`;
+      return;
+    }
+
+    const data = await res.json();
+    const name =
+      data.username ||
+      data.email?.split("@")[0] ||
+      "there";
+
+    el.innerText = `Hi, ${name} 👋`;
+  } catch (err) {
+    const name = user.username || user.email?.split("@")[0] || "there";
+    el.innerText = `Hi, ${name} 👋`;
+  }
+}
+// helper function
+function getCurrentUser() {
+  const s = JSON.parse(localStorage.getItem("skillswap_state")) || {};
+  return s.user || window.GLOBAL_STATE?.user || null;
+}
+/* =========================================================
+   THEME & STORAGE KEYS
+========================================================= */
+const STORAGE_KEY = "skillswap_state";
+const CALENDAR_MONTH_KEY = "skillswap_calendar_month";
+
+/* =========================================================
+   GLOBAL APPLICATION STATE
+========================================================= */
+const state = {
+  activity: [],       // activity feed items
+  roadmaps: [],       // learning roadmaps
+  calendar: {},       // reserved (used later)
+  events: [],         // calendar + exchanges
+  selectedRoadmap: null
+};
+
+/* =========================================================
+   STATE PERSISTENCE (LOCAL STORAGE)
+========================================================= */
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  // ❌ DO NOTHING
+  // Backend is the single source of truth now
+}
+
+/* =========================================================
+   MODAL HANDLING
+========================================================= */
+function openModal(type, payload = {}) {
+  const modal = document.getElementById("modal");
+  const content = modal.querySelector(".modal-content");
+
+  // clear previous modal content
+  content.innerHTML = "";
+
+  /* ---------- OFFER SKILL ---------- */
+  if (type === "offer") {
+    content.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">✖</button>
+      <h3>Offer a Skill</h3>
+
+      <input id="skillInput" placeholder="Enter skill"
+        style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc"/>
+
+      <br><br>
+      <button class="btn btn-primary" onclick="submitSkill()">Done</button>
+    `;
+  }
+
+  /* ---------- REQUEST SKILL ---------- */
+  if (type === "request") {
+    content.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">✖</button>
+      <h3>Request a Skill</h3>
+
+      <input id="skillInput" placeholder="Enter skill"
+        style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc"/>
+
+      <br><br>
+      <button class="btn btn-primary" onclick="submitRequest()">Done</button>
+    `;
+  }
+
+  /* ---------- CALENDAR DAY ---------- */
+  if (type === "day") {
+    const { date, events } = payload;
+
+    content.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">✖</button>
+      <h3>${date}</h3>
+
+      ${
+        events.length
+          ? events.map(e => `
+              <div class="activity">
+                <input type="checkbox"
+                  ${e.completed ? "checked" : ""}
+                  onchange="toggleEvent(${e.id})" />
+                ${e.title} (${e.type})
+              </div>
+            `).join("")
+          : `<div class="activity">No events</div>`
+      }
+
+      <br>
+
+      <input id="eventTitle" placeholder="New event"
+        style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc"/>
+
+      <select id="eventType"
+        style="width:100%;margin-top:10px;padding:10px;border-radius:10px">
+        <option value="study">Study</option>
+        <option value="exchange">Exchange</option>
+        <option value="reminder">Reminder</option>
+      </select>
+
+      <br><br>
+      <button class="btn btn-primary" onclick="addEvent('${date}')">Add</button>
+    `;
+  }
+
+  /* ---------- AI SELF STUDY ---------- */
+ /* ---------- AI SELF STUDY ---------- */
+if (type === "ai") {
+  content.innerHTML = `
+    <button onclick="closeModal()"
+      style="float:right;border:none;background:none;font-size:18px">✖</button>
+
+    <h3>Self-Study Planner</h3>
+
+    <label>Select Skill</label>
+    <select id="studySkill"
+      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc">
+
+      ${Object.keys(questionBank).map(skill => `
+        <option value="${skill}">${skill}</option>
+      `).join("")}
+
+    </select>
+
+    <br><br>
+
+    <label>Why do you want to learn it?</label>
+    <input id="studyWhy"
+      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc"/>
+
+    <br><br>
+
+    <label>Start date</label>
+    <input id="studyStart" type="date"
+      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc"/>
+
+    <br><br>
+
+    <label>End date</label>
+    <input id="studyEnd" type="date"
+      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc"/>
+
+    <br><br>
+
+    <button class="btn btn-primary"
+      onclick="generateRoadmap()">Generate Roadmap</button>
+  `;
+}
+  modal.style.display = "flex";
+}
+
+/* =========================================================
+   MODAL CLOSE
+========================================================= */
+function closeModal() {
+  const modal = document.getElementById("modal");
+  modal.querySelector(".modal-content").innerHTML = "";
+  modal.style.display = "none";
+}
+
+/* =========================================================
+   OFFER / REQUEST HANDLERS
+========================================================= */
+async function submitSkill() {
+  const skill = document.getElementById("skillInput").value.trim();
+  if (!skill) return showToast("Enter a skill");
+
+  const user = getCurrentUser();
+
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/skills/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: user.id,
+        name: skill,
+        type: "offer"
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Skill offer failed:", err);
+      return showToast("Failed to offer skill");
+    }
+
+    closeModal();
+    addActivity(`Skill offered: ${skill}`);
+    showToast("Skill offered successfully ✅");
+  } catch (err) {
+    console.error("Skill offer error:", err);
+    showToast("Server error");
+  }
+}
+async function submitRequest() {
+  const request = document.getElementById("skillInput").value.trim();
+  if (!request) return showToast("Enter a skill");
+
+  const user = getCurrentUser();
+
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/skills/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: user.id,
+        name: request,
+        type: "request"
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Skill request failed:", err);
+      return showToast("Failed to request skill");
+    }
+
+    closeModal();
+    addActivity(`Skill requested: ${request}`);
+    showToast("Request updated successfully ✅");
+  } catch (err) {
+    console.error("Skill request error:", err);
+    showToast("Server error");
+  }
+}
+
+/* =========================================================
+   UI HELPERS
+========================================================= */
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2000);
+}
+/* =========================================================
+   ACTIVITY FEED (BACKEND CONNECTED)
+========================================================= */
+
+async function loadActivityFromBackend() {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/activities/?user_id=${user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to load activities");
+      return;
+    }
+
+    const data = await res.json();
+    state.activity = data;
+    renderActivity();
+  } catch (err) {
+    console.error("Activity fetch error:", err);
+  }
+}
+
+async function addActivity(text) {
+  const user = getCurrentUser();
+
+  if (!user) return;
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/activities/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: user.id,
+        text: text
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Failed to save activity:", err);
+      return;
+    }
+
+    await loadActivityFromBackend();
+  } catch (err) {
+    console.error("Activity save error:", err);
+  }
+}
+
+function renderActivity() {
+  const feed = document.getElementById("activityFeed");
+  if (!feed) return;
+
+  if (!state.activity || !state.activity.length) {
+    feed.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        No activity yet — your journey starts here ✨
+      </div>
+    `;
+    return;
+  }
+
+  feed.innerHTML = state.activity
+    .slice(0, 5)
+    .map(a => `<div class="activity">• ${cleanText(a.text)}</div>`)
+    .join("");
+}
+/* =========================================================
+  HELPER FUNCTION TO CLEAN TEXT 
+========================================================= */
+function cleanText(val) {
+  if (!val) return "";
+  if (typeof val === "string") {
+    return val.replace(/<[^>]*>/g, ""); // strip HTML
+  }
+  if (typeof val === "object") {
+    return JSON.stringify(val);
+  }
+  return String(val);
+}
+/* =========================================================
+   ROADMAP CREATION
+========================================================= */
+async function generateRoadmap() {
+  const skill = document.getElementById("studySkill").value;
+  const start = document.getElementById("studyStart").value;
+  const end   = document.getElementById("studyEnd").value;
+
+  if (!skill || !start || !end) {
+    showToast("Fill all required fields");
+    return;
+  }
+
+  const user = getCurrentUser();
+
+
+  const payload = {
+    user_id: user.id,
+    skill: skill,
+    start_date: start,
+    end_date: end,
+    steps: [
+      `Understand basics of ${skill}`,
+      `Practice ${skill} daily`,
+      `Learn from a quality resource`,
+      `Build a small project`,
+      `Review & refine`,
+      `Apply ${skill} in real use`
+    ]
+  };
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/roadmaps/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload)
+    });
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (e) {
+      console.error("Non-JSON response from server");
+    }
+
+    if (!res.ok) {
+      console.error("ROADMAP CREATE ERROR:", data);
+      showToast("Failed to create roadmap");
+      return;
+    }
+
+    await loadRoadmapsFromBackend();
+    addActivity(`Created roadmap: ${skill}`);
+    closeModal();
+    showToast("Roadmap saved to database 🧠📅");
+
+  } catch (err) {
+    console.error("ROADMAP CREATE ERROR:", err);
+    showToast("Server error");
+  }
+}
+
+/* =========================================================
+   ROADMAP RENDERING
+========================================================= */
+function renderRoadmaps() {
+  const el = document.getElementById("savedRoadmaps");
+  if (!el) return;
+
+  if (!state.roadmaps || !state.roadmaps.length) {
+    el.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        No roadmaps yet — plan your first skill 🚀
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = state.roadmaps.map((r, i) => `
+    <div class="activity" style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="cursor:pointer" onclick="viewRoadmap(${i})">📍 ${r.skill}</span>
+      <button
+  onclick="openAssessment(${i})"
+  class="btn ${r.completed ? "btn-secondary" : "btn-primary"}"
+  style="padding:6px 12px;font-size:12px;border-radius:10px;
+    ${r.completed ? "background:#E5E7EB;color:#374151;pointer-events:none;" : ""}">
+  ${r.completed ? "✔ Completed" : "Mark done"}
+</button>
+    </div>
+  `).join("");
+}
+
+/* =========================================================
+   VIEW ROADMAP MODAL
+========================================================= */
+function viewRoadmap(index) {
+  const r = state.roadmaps[index];
+  state.selectedRoadmap = index;
+
+  const modal = document.getElementById("modal");
+  const content = modal.querySelector(".modal-content");
+
+  let steps = [];
+  if (Array.isArray(r.steps)) {
+    steps = r.steps;
+  } else {
+    try {
+      steps = JSON.parse(r.steps || "[]");
+    } catch (e) {
+      steps = [];
+    }
+  }
+
+  content.innerHTML = `
+    <h3>${r.skill} Roadmap</h3>
+    ${steps.map(s => `<div class="activity">• ${s}</div>`).join("")}
+    <br>
+    <button class="btn btn-primary" onclick="closeModal()">Close</button>
+  `;
+
+  modal.style.display = "flex";
+}
+
+/* =========================================================
+   MARK ROADMAP AS DONE
+========================================================= */
+async function markRoadmapDone(index) {
+  const roadmap = state.roadmaps[index];
+  if (!roadmap || roadmap.completed) return;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/roadmaps/${roadmap.id}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ completed: true })
+    });
+
+    if (!res.ok) {
+      console.error("ROADMAP UPDATE ERROR");
+      showToast("Failed to update roadmap");
+      return;
+    }
+
+    addActivity(`Completed roadmap: ${roadmap.skill}`);
+    await loadRoadmapsFromBackend();
+
+    if (typeof renderSkillTimeline === "function") renderSkillTimeline();
+    if (typeof renderCalendar === "function") renderCalendar();
+    if (typeof renderTodayFocus === "function") renderTodayFocus();
+    if (typeof renderBannerMessage === "function") renderBannerMessage();
+
+    showToast("🎉 Wow! You completed the challenge!");
+
+  } catch (err) {
+    console.error("ROADMAP UPDATE ERROR:", err);
+    showToast("Server error");
+  }
+}
+
+async function loadRoadmapsFromBackend() {
+  const user = getCurrentUser();
+
+  if (!user) return;
+
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/roadmaps/?user_id=${user.id}`,
+    { credentials: "include" }
+  );
+
+  if (!res.ok) {
+    console.error("Failed to load roadmaps");
+    return;
+  }
+
+  const data = await res.json();
+  state.roadmaps = data;
+
+  renderRoadmaps();
+  if (typeof renderSkillTimeline === "function") renderSkillTimeline();
+  if (typeof renderTodayFocus === "function") renderTodayFocus();
+  if (typeof renderBannerMessage === "function") renderBannerMessage();
+  renderSkillComparison();
+}
+
+/* =========================================================
+   CALENDAR STATE
+========================================================= */
+let currentMonth = (() => {
+  const saved = localStorage.getItem(CALENDAR_MONTH_KEY);
+  return saved ? new Date(saved) : new Date();
+})();
+
+/* =========================================================
+   LOAD EVENTS FROM BACKEND
+========================================================= */
+async function loadEventsFromBackend() {
+  const user = getCurrentUser();
+
+  if (!user) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/events/?user_id=${user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to load events");
+      return;
+    }
+
+    const data = await res.json();
+    state.events = data || [];
+
+    renderCalendar();
+    renderTodayFocus();
+  } catch (err) {
+    console.error("Event fetch error:", err);
+  }
+}
+
+/* =========================================================
+   CALENDAR RENDER
+========================================================= */
+function renderCalendar() {
+  const grid = document.getElementById("calendarGrid");
+  const header = document.getElementById("calendarHeader");
+  if (!grid || !header) return;
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+
+  header.innerHTML = `
+    <button class="calendar-nav-btn" onclick="changeMonth(-1)">‹</button>
+    <span>${currentMonth.toLocaleString("default", { month: "long" })} ${year}</span>
+    <button class="calendar-nav-btn" onclick="changeMonth(1)">›</button>
+  `;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  grid.className = "calendar";
+  grid.innerHTML = "";
+
+  for (let i = 0; i < firstDay; i++) {
+    grid.innerHTML += `<div></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const today = new Date().toISOString().split("T")[0];
+    const isToday = date === today ? "today" : "";
+
+    const events = state.events.filter(e => e.date === date);
+
+    const roadmapForDay = state.roadmaps.find(r => {
+      if (!r.start_date || !r.end_date) return false;
+      return date >= r.start_date && date <= r.end_date;
+    });
+
+    const types = [...new Set(events.map(e => e.type?.toLowerCase()))];
+
+    const hasCompleted = events.some(e => e.completed);
+    const hasPending = events.some(e => !e.completed);
+
+let typeClass = "";
+
+if (roadmapForDay && roadmapForDay.completed) {
+  typeClass = "completed";
+}
+else if (roadmapForDay) {
+  typeClass = "roadmap";
+}
+else if (hasPending && types.includes("study")) {
+  typeClass = "study";
+}
+else if (hasPending && types.includes("exchange")) {
+  typeClass = "exchange";
+}
+else if (hasPending && types.includes("reminder")) {
+  typeClass = "reminder";
+}
+
+    grid.innerHTML += `
+  <div class="calendar-day ${typeClass} ${isToday}"
+    onclick="dayClick(this, '${date}')">
+    ${d}
+  </div>
+`;
+  }
+}
+
+/* =========================================================
+   DAY CLICK
+========================================================= */
+function dayClick(el, date) {
+  el.classList.add("pulse");
+  setTimeout(() => el.classList.remove("pulse"), 300);
+  openDay(date);
+}
+
+/* =========================================================
+   TODAY FOCUS CARD
+========================================================= */
+function renderTodayFocus() {
+  const el = document.getElementById("todayFocus");
+  if (!el) return;
+
+  const activeRoadmap = state.roadmaps.find(r => !r.completed);
+
+  if (!activeRoadmap) {
+    el.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        No active roadmap — plan your next skill 🎯
+      </div>
+    `;
+    return;
+  }
+
+  const today = new Date().toISOString().split("T")[0];
+  const sessions = state.events.filter(
+    e => e.date === today && e.type?.toLowerCase() === "study"
+  );
+
+  el.innerHTML = `
+    <div style="font-weight:600;margin-bottom:6px;">
+      🎯 ${activeRoadmap.skill}
+    </div>
+    <div class="activity">
+      ${
+        sessions.length
+          ? `You have ${sessions.length} study session${sessions.length > 1 ? "s" : ""} today`
+          : `No study planned today for this skill`
+      }
+    </div>
+  `;
+}
+
+/* =========================================================
+   OPEN DAY MODAL
+========================================================= */
+function openDay(date) {
+  const events = state.events.filter(e => e.date === date);
+
+  const roadmapForDay = state.roadmaps.find(r => {
+  if (r.completed) return false;   // 🔥 ignore completed roadmaps
+  if (!r.start_date || !r.end_date) return false;
+  return date >= r.start_date && date <= r.end_date;
+});
+
+  const modal = document.getElementById("modal");
+  const content = modal.querySelector(".modal-content");
+
+  content.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✖</button>
+    <h3>${date}</h3>
+
+    ${
+      roadmapForDay
+        ? `
+          <div class="activity" style="opacity:0.85;margin-bottom:10px;">
+            📍 Roadmap active: <strong>${roadmapForDay.skill}</strong><br/>
+            You can add study sessions for this roadmap.
+          </div>
+        `
+        : ""
+    }
+
+    ${
+      events.length
+        ? events.map(e => `
+  <div class="activity"
+       style="cursor:pointer;"
+       onclick="handleCalendarEventClick(${e.id}, '${e.type}')">
+
+    ${
+      e.type.toLowerCase() === "exchange"
+        ? "🤝 "
+        : e.type.toLowerCase() === "study"
+        ? "📘 "
+        : "⏰ "
+    }
+
+    ${e.title} (${e.type})
+  </div>
+`).join("")
+        : !roadmapForDay
+          ? `<div class="activity" style="opacity:0.7;">
+               This day is free — add a study or exchange 📅
+             </div>`
+          : ""
+    }
+
+    <br>
+
+    <input id="eventTitle" placeholder="New event"
+      style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc"/>
+
+    <select id="eventType"
+      style="width:100%;margin-top:10px;padding:10px;border-radius:10px">
+      <option value="study">Study</option>
+      <option value="exchange">Exchange</option>
+      <option value="reminder">Reminder</option>
+    </select>
+
+    <br><br>
+    <button class="btn btn-primary" onclick="addEvent('${date}')">Add</button>
+  `;
+
+  modal.style.display = "flex";
+}
+function handleCalendarEventClick(eventId, type) {
+  if (type.toLowerCase() === "exchange") {
+    openExchangeRoom(eventId);
+  } else {
+    showToast("Only exchange events open the room");
+  }
+}
+function openExchangeRoom(eventId) {
+  const event = state.events.find(e => e.id === eventId);
+  if (!event) return;
+
+  // Convert calendar event to exchange format
+  const exchangeData = {
+    id: event.id,
+    skill_a: event.title,   // you only stored title, so use it
+    skill_b: "Not specified",
+    date: event.date,
+    time: event.time || "00:00"
+  };
+
+  // Save as ACTIVE exchange (not selected_exchange)
+  localStorage.setItem("activeExchange", JSON.stringify(exchangeData));
+
+  window.location.href = "exchange.html";
+}
+/* =========================================================
+   ADD EVENT (BACKEND)
+========================================================= */
+async function addEvent(date) {
+  const title = document.getElementById("eventTitle").value.trim();
+  const type = document.getElementById("eventType").value;
+  const user = getCurrentUser();
+
+
+  if (!title) return showToast("Enter event title");
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/events/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: user.id,
+        title,
+        type,
+        date,
+        completed: false
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Failed to add event:", err);
+      return;
+    }
+
+await loadEventsFromBackend();
+await addActivity(`Added ${type} on ${date}: ${title}`);
+renderTodayFocus();        // 👈 ADD THIS
+renderBannerMessage();    // 👈 ADD THIS
+closeModal();
+showToast("Event added 📅");
+
+  } catch (err) {
+    console.error("Add event error:", err);
+  }
+}
+
+/* =========================================================
+   TOGGLE EVENT COMPLETE (BACKEND)
+========================================================= */
+async function toggleEvent(id, completed) {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/events/${id}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ completed: !completed })
+    });
+
+    if (!res.ok) {
+      console.error("Failed to toggle event");
+      return;
+    }
+
+    await loadEventsFromBackend();
+  } catch (err) {
+    console.error("Toggle event error:", err);
+  }
+}
+
+/* =========================================================
+   MONTH NAVIGATION
+========================================================= */
+function changeMonth(offset) {
+  currentMonth.setMonth(currentMonth.getMonth() + offset);
+  localStorage.setItem(CALENDAR_MONTH_KEY, currentMonth.toISOString());
+  renderCalendar();
+}
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+loadState();
+(async function initDashboard() {
+  renderUserName();
+
+  await loadRoadmapsFromBackend();
+  await loadEventsFromBackend();
+  await loadActivityFromBackend();
+
+  renderCalendar();
+  renderTodayFocus();
+  await renderBannerMessage();
+  await renderSkillTimeline();
+  await renderExchangeStats();
+  renderSkillComparison();
+  await renderWeeklyReflection();
+  renderActivity();
+})();
+
+/* =========================================================
+   BANNER MESSAGE LOGIC
+========================================================= */
+async function renderBannerMessage() {
+  const el = document.getElementById("bannerMessage");
+  if (!el) return;
+
+  const user = getCurrentUser();
+  if (!user || !user.id) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/dashboard/banner/?user_id=${user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) throw new Error("API failed");
+
+    const data = await res.json();
+    el.innerText = data.message || "";
+
+  } catch (err) {
+    console.error("Banner API failed:", err);
+    el.innerText = "Welcome back 👋 Stay consistent today!";
+  }
+}
+
+/* =========================================================
+   WEEKLY SUMMARY HELPER
+========================================================= */
+async function getWeeklySummary() {
+  const user = getCurrentUser();
+
+  if (!user) return 0;
+
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/dashboard/weekly/?user_id=${user.id}`,
+    { credentials: "include" }
+  );
+
+  const data = await res.json();
+  return data.completed_this_week || 0;
+}
+
+/* =========================================================
+   SKILL JOURNEY TIMELINE
+========================================================= */
+async function renderSkillTimeline() {
+  const el = document.getElementById("skillTimeline");
+  if (!el) return;
+
+  const user = getCurrentUser();
+
+  if (!user) return;
+
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/dashboard/timeline/?user_id=${user.id}`,
+    { credentials: "include" }
+  );
+
+  const data = await res.json();
+  data.sort((a,b) => {
+
+  const order = {
+    active: 0,
+    upcoming: 1,
+    completed: 2
+  };
+
+  return order[a.status] - order[b.status];
+});
+
+  if (!Array.isArray(data) || !data.length) {
+    el.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        Your skill journey hasn’t started yet 🌱
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="timeline">
+      ${data.map(r => `
+        <div class="timeline-item ${r.status}">
+          <span>${r.skill}</span>
+          <small>${
+            r.status === "upcoming"
+              ? `Starts ${r.start_date}`
+              : r.status === "completed"
+              ? "Completed"
+              : "In progress"
+          }</small>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+/* =========================================================
+   EXCHANGE STATS — BACKEND CONNECTED
+========================================================= */
+async function renderExchangeStats() {
+  const el = document.getElementById("exchangeStats");
+  if (!el) return;
+
+  const user = getCurrentUser();
+  if (!user || !user.id) {
+    el.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        Login to view exchanges 🤝
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/dashboard/exchange-stats/?user_id=${user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Exchange stats API failed:", err);
+      el.innerHTML = `
+        <div class="activity" style="opacity:0.7;">
+          Failed to load exchange stats ⚠️
+        </div>
+      `;
+      return;
+    }
+
+    const data = await res.json();
+
+    const upcoming = Number(data.upcoming) || 0;
+    const completed = Number(data.completed) || 0;
+
+    if (upcoming === 0 && completed === 0) {
+      el.innerHTML = `
+        <div class="activity" style="opacity:0.7;">
+          No exchanges yet — connect with others 🤝
+        </div>
+      `;
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="activity">🤝 Upcoming exchanges: ${upcoming}</div>
+      <div class="activity">✔ Completed exchanges: ${completed}</div>
+    `;
+  } catch (err) {
+    console.error("renderExchangeStats error:", err);
+    el.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        Exchange stats unavailable ⚠️
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   SKILL COMPARISON CARD
+========================================================= */
+function renderSkillComparison() {
+  const el = document.getElementById("skillComparison");
+  if (!el) return;
+
+  const completed = state.roadmaps.filter(r => r.completed);
+  const active = state.roadmaps.find(r => !r.completed) || state.roadmaps[0];
+
+  if (state.roadmaps.length < 2) {
+    el.innerHTML = `
+      <div class="activity" style="opacity:0.7;">
+        🔒 Skill comparison unlocks after completing your first roadmap
+      </div>
+    `;
+    return;
+  }
+
+  const last = completed[0];
+  const lastStepsCount = Array.isArray(last.steps)
+    ? last.steps.length
+    : JSON.parse(last.steps || "[]").length;
+
+  const activeStepsCount = Array.isArray(active.steps)
+    ? active.steps.length
+    : JSON.parse(active.steps || "[]").length;
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <strong>Past Skill</strong>
+        <div class="activity">✔ ${last.skill}</div>
+        <div class="activity">Steps: ${lastStepsCount}</div>
+      </div>
+
+      <div>
+        <strong>Current Skill</strong>
+        <div class="activity">🎯 ${active.skill}</div>
+        <div class="activity">Steps: ${activeStepsCount}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   WEEKLY REFLECTION (BACKEND CONNECTED)
+========================================================= */
+async function renderWeeklyReflection() {
+  const el = document.getElementById("weeklyReflection");
+  if (!el) return;
+
+  const user = getCurrentUser();
+
+  if (!user) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/dashboard/reflection/?user_id=${user.id}`,
+      { credentials: "include" }
+    );
+
+    const data = await res.json();
+
+    if (!data.unlocked)  {
+      el.innerHTML = `
+        <div class="activity" style="opacity:0.7;">
+          🌱 Your weekly reflection will unlock after consistent usage
+        </div>
+      `;
+      return;
+    }
+
+    el.innerHTML = `
+  <div class="activity">
+    📝 ${data.latest ? data.latest : "Write your weekly reflection ✍"}
+  </div>
+`;
+  } catch (err) {
+    console.error("Weekly reflection load error:", err);
+  }
+}
+
+/* =========================================================
+   SAVE WEEKLY REFLECTION (BACKEND)
+========================================================= */
+async function saveReflection(week) {
+  const input = document.getElementById("reflectionInput");
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) return showToast("Write something first ✍");
+
+  const user = getCurrentUser();
+
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/dashboard/reflection/save/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        user_id: user.id,
+        week,
+        text
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Reflection save failed:", err);
+      return showToast("Failed to save reflection");
+    }
+
+    await renderWeeklyReflection();
+    showToast("Reflection saved 🌱");
+  } catch (err) {
+    console.error("Save reflection error:", err);
+  }
+}
+/* =========================================================
+   Toggle roadmapstep
+========================================================= */
+async function toggleRoadmapStep(roadmapId, stepIndex) {
+  try {
+    await fetch(`http://127.0.0.1:8000/api/roadmaps/${roadmapId}/step/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ step_index: stepIndex })
+    });
+
+    showToast("Step marked as done ✅");
+
+  } catch (err) {
+    console.error("Failed to update roadmap step:", err);
+    showToast("Failed to update step ❌");
+  }
+}
+
+let currentAssessmentIndex = null;
+let currentQuestionIndex = 0;
+
+function getQuestionsForCurrentSkill() {
+  const roadmap = state.roadmaps[currentAssessmentIndex];
+  if (!roadmap || !roadmap.skill) return [];
+
+  return questionBank[roadmap.skill] || [];
+}
+
+const questionBank = {
+
+  /* ==============================
+     🔹 10 TECH SKILLS
+  ============================== */
+
+  "Python": [
+    {
+      q: "Which keyword is used to define a function in Python?",
+      options: ["func", "def", "function", "define"],
+      answer: 1
+    },
+    {
+      q: "Which data type is immutable?",
+      options: ["list", "dict", "set", "tuple"],
+      answer: 3
+    }
+  ],
+
+  "JavaScript": [
+    {
+      q: "Which symbol is used for strict equality?",
+      options: ["==", "=", "===", "!="],
+      answer: 2
+    },
+    {
+      q: "Which keyword declares a constant?",
+      options: ["var", "let", "const", "static"],
+      answer: 2
+    }
+  ],
+
+  "HTML": [
+    {
+      q: "Which tag creates a hyperlink?",
+      options: ["<link>", "<a>", "<href>", "<url>"],
+      answer: 1
+    },
+    {
+      q: "Which tag is used for images?",
+      options: ["<img>", "<image>", "<pic>", "<src>"],
+      answer: 1
+    }
+  ],
+
+  "CSS": [
+    {
+      q: "Which property changes text color?",
+      options: ["font-color", "color", "text-style", "background"],
+      answer: 1
+    },
+    {
+      q: "Which layout system is one-dimensional?",
+      options: ["Grid", "Flexbox", "Float", "Position"],
+      answer: 1
+    }
+  ],
+
+  "SQL": [
+    {
+      q: "Which keyword retrieves data?",
+      options: ["GET", "FETCH", "SELECT", "SHOW"],
+      answer: 2
+    },
+    {
+      q: "Which clause filters rows?",
+      options: ["WHERE", "ORDER", "GROUP", "LIMIT"],
+      answer: 0
+    }
+  ],
+
+  "Django": [
+    {
+      q: "Which file defines database models?",
+      options: ["views.py", "models.py", "urls.py", "settings.py"],
+      answer: 1
+    },
+    {
+      q: "Which command creates migrations?",
+      options: ["runserver", "makemigrations", "migrate", "startapp"],
+      answer: 1
+    }
+  ],
+
+  "React": [
+    {
+      q: "What hook is used for state?",
+      options: ["useState", "useEffect", "useRef", "useMemo"],
+      answer: 0
+    },
+    {
+      q: "React uses which syntax?",
+      options: ["HTML", "JSX", "XML", "TSX"],
+      answer: 1
+    }
+  ],
+
+  "Git": [
+    {
+      q: "Which command stages changes?",
+      options: ["git push", "git add", "git commit", "git pull"],
+      answer: 1
+    },
+    {
+      q: "Which command uploads to remote?",
+      options: ["git push", "git merge", "git clone", "git status"],
+      answer: 0
+    }
+  ],
+
+  "Data Structures": [
+    {
+      q: "Which data structure uses FIFO?",
+      options: ["Stack", "Queue", "Tree", "Graph"],
+      answer: 1
+    },
+    {
+      q: "Which structure uses LIFO?",
+      options: ["Stack", "Queue", "Array", "Set"],
+      answer: 0
+    }
+  ],
+
+  "Machine Learning": [
+    {
+      q: "Which is a supervised algorithm?",
+      options: ["K-Means", "Linear Regression", "PCA", "Apriori"],
+      answer: 1
+    },
+    {
+      q: "Which library is used in Python for ML?",
+      options: ["NumPy", "Scikit-learn", "Matplotlib", "Tkinter"],
+      answer: 1
+    }
+  ],
+
+  /* ==============================
+     🔹 5 NON-TECH SKILLS
+  ============================== */
+
+  "Public Speaking": [
+    {
+      q: "What improves stage confidence?",
+      options: ["Practice", "Avoid audience", "Read slides", "Speak fast"],
+      answer: 0
+    },
+    {
+      q: "Eye contact helps in?",
+      options: ["Confidence", "Confusion", "Silence", "Ignoring"],
+      answer: 0
+    }
+  ],
+
+  "Leadership": [
+    {
+      q: "A good leader should?",
+      options: ["Control everyone", "Inspire team", "Avoid risk", "Ignore feedback"],
+      answer: 1
+    },
+    {
+      q: "Leadership requires?",
+      options: ["Communication", "Silence", "Fear", "Authority only"],
+      answer: 0
+    }
+  ],
+
+  "Time Management": [
+    {
+      q: "Best tool for planning tasks?",
+      options: ["Calendar", "Ignore tasks", "Multitask always", "Delay work"],
+      answer: 0
+    },
+    {
+      q: "Prioritizing tasks improves?",
+      options: ["Productivity", "Stress", "Delay", "Confusion"],
+      answer: 0
+    }
+  ],
+
+  "Communication Skills": [
+    {
+      q: "Active listening means?",
+      options: ["Interrupting", "Paying attention", "Ignoring", "Multitasking"],
+      answer: 1
+    },
+    {
+      q: "Clear communication avoids?",
+      options: ["Understanding", "Confusion", "Clarity", "Focus"],
+      answer: 0
+    }
+  ],
+
+  "Critical Thinking": [
+    {
+      q: "Critical thinking involves?",
+      options: ["Blind belief", "Logical analysis", "Guessing", "Emotion only"],
+      answer: 1
+    },
+    {
+      q: "Good decisions require?",
+      options: ["Evidence", "Rumors", "Impulse", "Assumption"],
+      answer: 0
+    }
+  ],
+
+  /* ==============================
+     🔹 5 BASIC SKILLS
+  ============================== */
+
+  "Typing": [
+    {
+      q: "Touch typing means?",
+      options: ["Looking at keyboard", "Typing without looking", "Slow typing", "Using one hand"],
+      answer: 1
+    },
+    {
+      q: "Proper typing improves?",
+      options: ["Speed", "Errors", "Delay", "Fatigue only"],
+      answer: 0
+    }
+  ],
+
+  "Basic Math": [
+    {
+      q: "5 × 6 equals?",
+      options: ["30", "25", "35", "40"],
+      answer: 0
+    },
+    {
+      q: "10% of 200 is?",
+      options: ["10", "20", "30", "40"],
+      answer: 1
+    }
+  ],
+
+  "English Grammar": [
+    {
+      q: "Which is correct?",
+      options: ["She go", "She goes", "She going", "She gone"],
+      answer: 1
+    },
+    {
+      q: "Past tense of 'eat'?",
+      options: ["eated", "ate", "eaten", "eat"],
+      answer: 1
+    }
+  ],
+
+  "Computer Basics": [
+    {
+      q: "CPU stands for?",
+      options: ["Central Process Unit", "Central Processing Unit", "Computer Power Unit", "Control Processing Unit"],
+      answer: 1
+    },
+    {
+      q: "RAM is used for?",
+      options: ["Storage", "Temporary memory", "Backup", "Printing"],
+      answer: 1
+    }
+  ],
+
+  "Internet Basics": [
+    {
+      q: "HTTP stands for?",
+      options: ["HyperText Transfer Protocol", "High Transfer Text Program", "Hyper Transfer Tool", "Host Transfer Protocol"],
+      answer: 0
+    },
+    {
+      q: "Phishing is?",
+      options: ["Cyber attack", "Fishing", "Coding", "Debugging"],
+      answer: 0
+    }
+  ]
+
+};
+let userAnswers = [];
+
+function openAssessment(index) {
+  currentAssessmentIndex = index;
+  currentQuestionIndex = 0;
+  userAnswers = [];
+
+  const roadmap = state.roadmaps[index];
+  const skill = roadmap.skill;
+
+  const modal = document.getElementById("assessmentModal");
+  document.getElementById("assessmentTitle").innerText =
+    `Skill Check: ${skill}`;
+
+  renderQuestion();
+  modal.style.display = "flex";
+}
+
+function closeAssessment() {
+  document.getElementById("assessmentModal").style.display = "none";
+}
+
+function renderQuestion() {
+  const questionBox = document.getElementById("questionBox");
+  const questions = getQuestionsForCurrentSkill();
+
+  if (!questions.length) {
+    questionBox.innerHTML =
+      `<div class="activity">No questions available for this skill.</div>`;
+    return;
+  }
+
+  if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
+    currentQuestionIndex = 0;
+  }
+
+  const q = questions[currentQuestionIndex];
+
+  questionBox.innerHTML = `
+    <div class="activity">
+      <strong>Q${currentQuestionIndex + 1}:</strong> ${q.q}
+    </div>
+
+    ${q.options.map((opt, i) => `
+      <div class="activity">
+        <label>
+          <input 
+            type="radio" 
+            name="mcq" 
+            value="${i}"
+            ${userAnswers[currentQuestionIndex] === i ? "checked" : ""}
+          >
+          ${opt}
+        </label>
+      </div>
+    `).join("")}
+  `;
+}
+
+function nextQuestion() {
+  if (!saveAnswer()) return;
+
+  const questions = getQuestionsForCurrentSkill();
+
+  if (currentQuestionIndex < questions.length - 1) {
+    currentQuestionIndex++;
+    renderQuestion();
+  } else {
+    finishAssessment();
+  }
+}
+
+function prevQuestion() {
+  saveAnswer();
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    renderQuestion();
+  }
+}
+
+function saveAnswer() {
+  const selected = document.querySelector('input[name="mcq"]:checked');
+  if (!selected) return false;
+
+  userAnswers[currentQuestionIndex] = parseInt(selected.value, 10);
+  return true;
+}
+/* =========================================================
+   FINISH ASSESSMENT
+========================================================= */
+async function finishAssessment() {
+
+  const questions = getQuestionsForCurrentSkill();
+
+  if (!questions.length) {
+    showToast("⚠ No questions found for this skill.");
+    return;
+  }
+
+  let correct = 0;
+
+  for (let i = 0; i < questions.length; i++) {
+    if (Number(userAnswers[i]) === Number(questions[i].answer)) {
+      correct++;
+    }
+  }
+
+  console.log("User answers:", userAnswers);
+  console.log("Correct count:", correct);
+
+  if (correct !== questions.length) {
+    showToast(`❌ You answered ${correct}/${questions.length} correctly. Try again.`);
+    return;
+  }
+
+  showToast("✅ Assessment Passed!");
+
+  closeAssessment();
+  await markRoadmapDone(currentAssessmentIndex);
+}
+/* =========================================================
+   UNDO SUPPORT — SNAPSHOT
+   Stores last full state before destructive actions
+========================================================= */
+let lastSnapshot = null;
+
+function snapshot() {
+  lastSnapshot = JSON.stringify(state);
+}
+
+function undoLastAction() {
+  if (!lastSnapshot) return showToast("Nothing to undo");
+
+  Object.assign(state, JSON.parse(lastSnapshot));
+
+  renderActivity();
+  renderRoadmaps();
+  renderCalendar();
+  renderTodayFocus();
+  renderBannerMessage();
+  renderSkillTimeline();
+  renderSkillComparison();
+  renderWeeklyReflection();
+  renderExchangeStats();
+
+  showToast("Action undone ↩");
+}
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+  });
+</script>
+
+</body>
+</html>

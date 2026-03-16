@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSwap – Connect</title>
+
+<style>
+/* =========================================================
+   ROOT VARIABLES (SHARED ACROSS APP)
+========================================================= */
+:root {
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+
+  --success:#5CB8A6;
+  --reminder:#F2B705;
+}
+
+/* =========================================================
+   DARK MODE (AUTO-FOLLOWS DASHBOARD TOGGLE)
+========================================================= */
+body.dark {
+  --bg-main:#141021;
+  --white:#1E1A2E;
+  --text-dark:#F4F2FA;
+  --text-muted:#B6AEDC;
+}
+
+/* =========================================================
+   GLOBAL BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+  width: 80px;
+  background: var(--violet-900);
+  padding: 20px 12px;
+  transition: width 0.35s ease;
+}
+
+.sidebar:hover { width: 230px; }
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.sidebar:hover .brand { opacity: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+
+.nav-item .label { opacity: 0; }
+.sidebar:hover .label { opacity: 1; }
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   CONNECT PAGE
+========================================================= */
+.connect-page {
+  padding-bottom: 30px;
+}
+
+/* FILTER BAR */
+.connect-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.filter {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--white);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(28,12,56,0.08);
+}
+
+.filter.active {
+  background: var(--violet-500);
+  color: white;
+}
+
+.results-count {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* LAYOUT */
+.connect-layout {
+  display: block;
+}
+
+/* PEOPLE GRID */
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+/* PERSON CARD */
+.person-card {
+  background: var(--white);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 14px 36px rgba(28,12,56,0.08);
+}
+
+.person-card.featured {
+  border: 2px solid var(--violet-500);
+}
+
+.person-header {
+  display: flex;
+  gap: 14px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    var(--violet-500),
+    var(--violet-300)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+
+.name {
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.location {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+}
+
+.badge.verified {
+  background: rgba(92,184,166,0.15);
+  color: var(--success);
+}
+
+.rating {
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+/* SKILLS */
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skills span {
+  padding: 6px 12px;
+  background: var(--bg-main);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+/* ACTIONS */
+.card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: var(--violet-500);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--violet-300);
+  color: var(--violet-700);
+}
+
+/* RIGHT SIDEBAR */
+.connect-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.side-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(28,12,56,0.08);
+}
+
+/* QUICK MATCH */
+.quick-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.mini-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--violet-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.btn.small {
+  margin-left: auto;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+/* =========================================================
+   TOAST
+========================================================= */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--violet-900);
+  color: white;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.35s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.connect-sidebar {
+  align-self: start;
+}
+/* SEARCH BAR */
+.connect-search {
+  margin-bottom: 18px;
+}
+
+.connect-search input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: none;
+  font-size: 15px;
+  background: var(--white);
+  color: var(--text-dark);
+  box-shadow: 0 8px 20px rgba(28,12,56,0.08);
+}
+
+.connect-search input::placeholder {
+  color: var(--text-muted);
+}
+/* PEOPLE SECTION STRUCTURE FIX */
+.people-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.person-card {
+  border: 2px solid var(--violet-300); /* default outline for all */
+}
+/* PROFILE MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,12,56,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 26px;
+  border-radius: 22px;
+  width: 420px;
+  max-width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.quick-match-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--bg-main);
+  margin-top: 12px;
+}
+
+.quick-match-item button {
+  margin-left: auto;
+}
+/* QUICK MATCH CARDS */
+.qm-card {
+  border: 2px solid var(--violet-300);
+  border-radius: 18px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.qm-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+background: var(--violet-500);
+  color: white;
+  font-weight: 600;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.qm-avatar:hover {
+  opacity: 0.9;
+}
+
+.qm-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* SENT STATE */
+.qm-connect-btn.sent {
+  background: var(--success);
+  border-color: var(--success);
+  cursor: default;
+}
+#quickMatchModal .modal-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+#quickMatchModal .modal-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+/* =========================================================
+for anchor tag
+========================================================= */
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.create-card-modal{
+  width:420px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.modal-description{
+  font-size:14px;
+  color:var(--text-muted);
+  line-height:1.4;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.form-group label{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-dark);
+}
+
+.form-group input,
+.form-group textarea{
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--violet-300);
+  font-size:14px;
+}
+
+.form-group textarea{
+  min-height:70px;
+  resize:none;
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:10px;
+}
+</style>
+<script src="theme.js"></script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">SkillSwap</div>
+
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item">
+      🏠 <span class="label">Dashboard</span>
+    </div>
+  </a>
+
+  <a href="explore.html" class="nav-link">
+    <div class="nav-item">
+      🌍 <span class="label">Explore</span>
+    </div>
+  </a>
+
+  <a href="connect.html" class="nav-link">
+    <div class="nav-item active">
+      🤝 <span class="label">Connect</span>
+    </div>
+  </a>
+
+  <a href="messages.html" class="nav-link">
+    <div class="nav-item ">
+      💬 <span class="label">Messages</span>
+    </div>
+  </a>
+
+  <a href="progress.html" class="nav-link">
+    <div class="nav-item">
+      📊 <span class="label">Progress</span>
+    </div>
+  </a>
+
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      👤 <span class="label">Profile</span>
+    </div>
+  </a>
+</div>
+
+</div>
+<!-- MAIN -->
+<div class="main connect-page">
+
+    <!--search bar-->
+<div class="connect-search">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search by name or skill..."
+  />
+</div>
+
+
+  <div class="connect-filters">
+    <div class="filter active">All</div>
+    <div class="filter">Online</div>
+    <div class="filter">In-person</div>
+    <div class="filter">Featured</div>
+    <div class="filter">Verified</div>
+    <div class="results-count">30 results</div>
+    <button class="btn btn-primary" onclick="openQuickMatches()">
+  ⚡ Quick Matches
+</button>
+<button class="btn btn-primary"  onclick="openExchange()">Enter Exchange Room</button>
+
+<button class="btn btn-primary" onclick="openCreateCard()">
+⭐ Create Your Card
+</button>
+
+  </div>
+
+  <div class="connect-layout">
+<!--cards-->
+   <div class="people-section">
+  <h2>People near you & online</h2>
+  <div class="people-grid" id="peopleGrid"></div>
+</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- PROFILE MODAL -->
+ 
+<div class="modal" id="profileModal">
+  <div class="modal-content profile-view">
+
+    <h3 id="profileTitle"></h3>
+
+    <div class="profile-avatar" id="profileAvatar"></div>
+
+    <div class="profile-name">
+      <span id="profileName"></span>
+      <span id="profileVerified" class="badge verified" style="display:none;">
+        ✔ Verified
+      </span>
+    </div>
+
+    <div class="profile-location" id="profileLocation"></div>
+    <p class="profile-bio" id="profileBio"></p>
+
+    <hr />
+
+    <div class="profile-section">
+      <strong>🎓 Offers:</strong>
+      <div class="skills" id="profileOffers"></div>
+    </div>
+
+    <div class="profile-section">
+      <strong>📘 Wants to Learn:</strong>
+      <div class="skills" id="profileWants"></div>
+    </div>
+
+    <div class="profile-rating" id="profileRating"></div>
+
+    <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:12px;">
+      <button class="btn btn-outline" onclick="closeProfile()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeProfile()">Confirm</button>
+    </div>
+
+  </div>
+</div>
+<!-- QUICK MATCHES MODAL -->
+<div class="modal" id="quickMatchModal">
+  <div class="modal-content">
+
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <h3 style="margin:0;">Quick Matches</h3>
+      <button class="btn btn-outline small" onclick="closeQuickMatches()">← Back</button>
+    </div>
+
+    <p style="color:var(--text-muted); margin-top:6px;">
+      Based on your searches & interests
+    </p>
+
+    <div class="people-grid" id="quickMatchGrid"></div>
+
+  </div>
+</div>
+
+<!-- CREATE CARD MODAL -->
+<div class="modal" id="createCardModal">
+
+  <div class="modal-content create-card-modal">
+
+    <h3>Create Your Connect Card</h3>
+
+    <p class="modal-description">
+      Stand out in the community by showcasing what you can teach and what you want to learn.
+      Other members will be able to discover you and send skill exchange requests.
+    </p>
+
+    <div class="form-group">
+      <label>Headline</label>
+      <input id="cardSubtitle" placeholder="Example: UI/UX Designer • Figma Mentor">
+    </div>
+
+    <div class="form-group">
+      <label>Location</label>
+      <input id="cardLocation" placeholder="Example: Chennai / Online">
+    </div>
+
+    <div class="form-group">
+      <label>Skills You Offer</label>
+      <textarea id="cardSkills" placeholder="Example: UI Design, Figma, Prototyping"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeCreateCard()">Cancel</button>
+      <button class="btn btn-primary" onclick="createCard()">Create Card</button>
+    </div>
+
+  </div>
+
+</div>
+
+  </div>
+</div>
+<script>
+  const STORAGE_KEY = "skillswap_state";
+const GLOBAL_STATE = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+if (!GLOBAL_STATE.user || !GLOBAL_STATE.user.id) {
+  alert("Not logged in. Redirecting to login.");
+  window.location.href = "login.html";
+}
+/* =========================================================
+   TOAST
+========================================================= */
+function showToast(message) {
+  let toast = document.createElement("div");
+  toast.className = "toast show";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+/* =========================================================
+   PEOPLE DATA
+========================================================= */
+let people = [];
+
+async function loadPeople() {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/connect/people/");
+    const data = await res.json();
+
+    people = data.map(p => ({
+      id: p.id, 
+      name: p.name,
+      initials: p.name.split(" ").map(w => w[0]).join(""),
+      subtitle: p.subtitle,
+      location: p.location,
+      rating: `★ ${p.rating}`,
+      skills: p.skills,
+      verified: p.verified,
+      featured: p.featured
+    }));
+
+    renderPeople(people);
+    await markSentRequests();   // 🔥 THIS WAS MISSING
+  } catch (err) {
+    console.error("Failed to load people", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadPeople);
+
+/* =========================================================
+   SEARCH HISTORY MEMORY
+========================================================= */
+const searchHistory = new Set();
+
+/* =========================================================
+   RENDER PEOPLE
+========================================================= */
+const grid = document.getElementById("peopleGrid");
+
+function renderPeople(list) {
+
+  grid.innerHTML = "";
+
+  list.forEach((p, index) => {
+
+    const card = document.createElement("div");
+    card.className = `person-card ${p.featured ? "featured" : ""}`;
+
+    const subtitle = p.subtitle || "Profile updating soon...";
+    const location = p.location || "Location coming soon";
+
+    let skillsHTML = "";
+
+    if (!p.skills || p.skills.length === 0) {
+
+      skillsHTML = `
+        <div class="subtitle" style="margin-top:8px;">
+          This member will update their card shortly.<br/>
+          <span style="color:var(--text-muted)">
+          Explore other members meanwhile.
+          </span>
+        </div>
+      `;
+
+    } else {
+
+      skillsHTML = `
+        <div class="skills">
+          ${p.skills.map(skill => `<span>${skill}</span>`).join("")}
+        </div>
+      `;
+
+    }
+
+    card.innerHTML = `
+      <div class="person-header">
+        <div class="avatar">${p.initials}</div>
+
+        <div>
+          <div class="name">
+            ${p.name}
+            ${p.verified ? `<span class="badge verified">✔ Verified</span>` : ""}
+          </div>
+
+          <div class="subtitle">${subtitle}</div>
+          <div class="location">${location}</div>
+        </div>
+      </div>
+
+      <div class="rating">${p.rating}</div>
+
+      ${skillsHTML}
+
+      <div class="card-actions">
+        <button class="btn btn-primary exchange-btn" data-index="${index}">
+          Request Exchange
+        </button>
+
+        <button class="btn btn-outline" onclick="openProfile(${index})">
+          View Profile
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+
+  });
+
+}
+// Initial render on page load
+renderPeople(people);
+
+/* =========================================================
+   search logic
+========================================================= */
+let activeFilter = "All";
+
+function applyFilters() {
+  const query = document.getElementById("searchInput").value.toLowerCase().trim();
+
+  if (query.length > 1) {
+    searchHistory.add(query);
+  }
+
+  let filtered = people.filter(p => {
+    // SEARCH MATCH
+    const matchesSearch =
+      !query ||
+      p.name.toLowerCase().includes(query) ||
+      p.skills.some(skill => skill.toLowerCase().includes(query));
+
+    // FILTER MATCH
+    let matchesFilter = true;
+
+    if (activeFilter === "Online") {
+      matchesFilter = p.location.toLowerCase().includes("online");
+    } else if (activeFilter === "In-person") {
+      matchesFilter = p.location.toLowerCase().includes("in-person");
+    } else if (activeFilter === "Featured") {
+      matchesFilter = p.featured;
+    } else if (activeFilter === "Verified") {
+      matchesFilter = p.verified;
+    }
+
+    return matchesSearch && matchesFilter;
+  });
+
+  renderPeople(filtered);
+}
+
+document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+/* =========================================================
+   EXCHANGE BUTTON INTERACTION
+========================================================= */
+document.addEventListener("click", async e => {
+  if (!e.target.classList.contains("exchange-btn")) return;
+
+  const btn = e.target;
+  const index = btn.dataset.index;
+  const toUser = people[index];
+
+  console.log("Sending exchange request:", {
+    from: GLOBAL_STATE?.user?.id,
+    to: toUser?.id
+  });
+
+  try {
+
+  /* ---------- SEND EXCHANGE REQUEST ---------- */
+  const res = await fetch("http://127.0.0.1:8000/api/connect/request/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from_user_id: GLOBAL_STATE.user.id,
+      to_user_id: toUser.id
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Request failed");
+    return;
+  }
+
+  /* ---------- MESSAGE FOR RECEIVER ---------- */
+/* ---------- MESSAGE FOR SENDER ---------- */
+await fetch("http://127.0.0.1:8000/api/messages/system/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    sender_id: GLOBAL_STATE.user.id,
+    receiver_id: GLOBAL_STATE.user.id,
+    text: `You sent a skill exchange request to ${toUser.name}.`,
+    request_from: null
+  })
+});
+/* ---------- MESSAGE FOR SENDER ---------- */
+/* ---------- MESSAGE FOR RECEIVER ---------- */
+await fetch("http://127.0.0.1:8000/api/messages/system/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    sender_id: GLOBAL_STATE.user.id,
+    receiver_id: toUser.id,
+    text: `${GLOBAL_STATE.user.username} sent you a skill exchange request.`,
+    request_from: GLOBAL_STATE.user.id
+  })
+});
+  /* ---------- UPDATE BUTTON UI ---------- */
+  btn.textContent = "Request Sent";
+  btn.style.background = "#5CB8A6";
+  btn.style.color = "white";
+  btn.disabled = true;
+
+  showToast("Exchange request sent 🤝");
+
+} catch (err) {
+
+  console.error("Network error:", err);
+  alert("Server not reachable");
+
+}
+});
+
+/* =========================================================
+   PROFILE MODAL LOGIC (CLEAN + STATE AWARE)
+========================================================= */
+function openProfile(index) {
+  if (!people[index]) return;
+
+  const p = people[index];
+
+  document.getElementById("profileTitle").textContent = `${p.name}'s Profile`;
+  document.getElementById("profileAvatar").textContent = p.initials;
+  document.getElementById("profileName").textContent = p.name;
+  document.getElementById("profileLocation").textContent = p.location;
+  document.getElementById("profileBio").textContent =
+    "Passionate about skill exchange and collaborative learning.";
+
+  // Verified badge
+  const verified = document.getElementById("profileVerified");
+  verified.style.display = p.verified ? "inline-block" : "none";
+
+  // Offers
+  const offers = document.getElementById("profileOffers");
+  offers.innerHTML = "";
+  p.skills.forEach(skill => {
+    const span = document.createElement("span");
+    span.textContent = skill;
+    offers.appendChild(span);
+  });
+
+  // Wants (demo data – intentional)
+  document.getElementById("profileWants").innerHTML = `
+    <span>Public Speaking</span>
+    <span>Time Management</span>
+  `;
+
+  document.getElementById("profileRating").textContent = p.rating;
+
+  document.getElementById("profileModal").classList.add("show");
+}
+
+/* =========================================================
+   CLOSE PROFILE MODAL
+========================================================= */
+function closeProfile() {
+  const modalEl = document.getElementById("profileModal");
+  if (!modalEl) return;
+
+  modalEl.classList.remove("show");
+}
+
+/* =========================================================
+   QUICK MATCHES LOGIC NEW ONE
+========================================================= */
+/* =========================================================
+   QUICK MATCHES (SEARCH-AWARE, CLEAN)
+========================================================= */
+function openQuickMatches() {
+  const modal = document.getElementById("quickMatchModal");
+  const grid = document.getElementById("quickMatchGrid");
+
+  grid.innerHTML = "";
+
+  // Score people based on search history
+  const scored = people.map((p, index) => {
+    let score = 0;
+
+    searchHistory.forEach(term => {
+      if (
+        p.name.toLowerCase().includes(term) ||
+        p.skills.some(s => s.toLowerCase().includes(term))
+      ) {
+        score += 2;
+      }
+    });
+
+    if (p.verified) score += 1;
+    if (p.featured) score += 1;
+
+    return { person: p, index, score };
+  });
+
+  const matches = scored
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6);
+
+  if (matches.length === 0) {
+    grid.innerHTML = `<p style="color:var(--text-muted)">No quick matches yet</p>`;
+    modal.classList.add("show");
+    return;
+  }
+
+  matches.forEach(({ person, index }) => {
+    const card = document.createElement("div");
+    card.className = "qm-card";
+
+    card.innerHTML = `
+      <div class="qm-avatar" title="View profile">
+        ${person.initials}
+      </div>
+
+      <div class="qm-name">${person.name}</div>
+
+      <button class="btn btn-primary qm-connect-btn">
+        Connect
+      </button>
+    `;
+
+    // Avatar opens correct profile
+    card.querySelector(".qm-avatar").onclick = () => openProfile(index);
+
+    // Connect action
+    const btn = card.querySelector(".qm-connect-btn");
+    btn.onclick = () => sendQuickConnect(btn);
+
+    grid.appendChild(card);
+  });
+
+  modal.classList.add("show");
+}
+
+function closeQuickMatches() {
+  document.getElementById("quickMatchModal").classList.remove("show");
+}
+function sendQuickConnect(btn) {
+  if (btn.classList.contains("sent")) return;
+
+  const name =
+    btn.closest(".qm-card")?.querySelector(".qm-name")?.textContent;
+
+  btn.textContent = "Sent";
+  btn.classList.remove("btn-primary");
+  btn.classList.add("sent");
+  btn.disabled = true;
+
+  showToast("Connection request sent 🤝");
+
+  // 🔑 store correct user
+  if (name) {
+    localStorage.setItem("openChatUser", name);
+    // optional redirect (if pages are separate)
+    window.location.href = "messages.html";
+  }
+}
+
+//new block
+document.querySelectorAll(".filter").forEach(filter => {
+  filter.addEventListener("click", () => {
+    // UI state
+    document.querySelectorAll(".filter").forEach(f => f.classList.remove("active"));
+    filter.classList.add("active");
+
+    // Logic state
+    activeFilter = filter.textContent.trim();
+
+    applyFilters();
+  });
+});
+//opening the exchange room
+function openExchange() {
+  window.location.href = "exchange.html";
+}
+//mark sent request
+async function markSentRequests() {
+  const res = await fetch(`http://127.0.0.1:8000/api/connect/sent/${GLOBAL_STATE.user.id}/`);
+  const sentIds = await res.json();
+
+  document.querySelectorAll(".exchange-btn").forEach(btn => {
+    const index = btn.dataset.index;
+    if (sentIds.includes(people[index].id)) {
+      btn.textContent = "Request Sent";
+      btn.style.background = "#5CB8A6";
+      btn.style.color = "white";
+      btn.disabled = true;
+    }
+  });
+}
+//create new card
+function openCreateCard(){
+  document.getElementById("createCardModal").classList.add("show");
+}
+
+function closeCreateCard(){
+  document.getElementById("createCardModal").classList.remove("show");
+}
+
+async function createCard(){
+
+  const subtitle = document.getElementById("cardSubtitle").value.trim();
+  const location = document.getElementById("cardLocation").value.trim();
+  const skills = document.getElementById("cardSkills").value
+      .split(",")
+      .map(s => s.trim());
+
+  const res = await fetch("http://127.0.0.1:8000/api/connect/create-profile/",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        user_id: GLOBAL_STATE.user.id,
+        subtitle: subtitle,
+        location: location,
+        skills: skills
+      })
+  });
+
+  const data = await res.json();
+
+  if(data.error){
+     alert(data.error);
+     return;
+  }
+
+  showToast("Card created successfully ⭐");
+
+  closeCreateCard();
+
+  loadPeople(); // reload cards
+}
+async function viewProfile(userId) {
+
+  await fetch("http://127.0.0.1:8000/api/profile/view/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    credentials: "include",
+    body: JSON.stringify({ user_id: userId })
+  });
+
+  window.location.href = `profile.html?user=${userId}`;
+}
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+  });
+</script>
+
+</body>
+</html>

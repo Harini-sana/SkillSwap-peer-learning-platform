@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSwap – Progress</title>
+
+<style>
+/* =========================================================
+   ROOT VARIABLES (SHARED ACROSS APP)
+========================================================= */
+:root {
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+  --success:#5CB8A6;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* =========================================================
+   DARK MODE (PARITY WITH OTHER PAGES)
+========================================================= */
+body.dark {
+  --bg-main:#141021;
+  --white:#1E1A2E;
+  --text-dark:#F4F2FA;
+  --text-muted:#B6AEDC;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+  width: 80px;
+  background: var(--violet-900);
+  padding: 20px 12px;
+  transition: width 0.35s ease;
+}
+.skill-card.completed {
+  opacity: 0.65;
+}
+.sidebar:hover { width: 230px; }
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.sidebar:hover .brand { opacity: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+
+.nav-item .label { opacity: 0; }
+.sidebar:hover .label { opacity: 1; }
+
+/* =========================================================
+   MAIN
+========================================================= */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+.page-header p {
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   STATS GRID
+========================================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(28,12,56,0.08);
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.stat-card .value {
+  margin-top: 8px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+.btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--violet-500);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+/* =========================================================
+   SKILL PROGRESS
+========================================================= */
+.skill-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(28,12,56,0.08);
+  margin-bottom: 14px;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.progress-bar {
+  height: 10px;
+  background: var(--violet-100);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--violet-500);
+  border-radius: 999px;
+  width: 0;
+  transition: width 1.2s ease;
+}
+
+/* =========================================================
+   ACTIVITY
+========================================================= */
+.activity-item {
+  background: var(--white);
+  padding: 14px 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(28,12,56,0.06);
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.activity-item span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===============================
+   SELF CERTIFICATE BASE
+================================ */
+.certificate {
+  width: 1000px;
+  height: 700px;
+  margin: auto;
+  background: linear-gradient(
+    135deg,
+    #f8f3ff,
+    #f2e9ff
+  );
+  border-radius: 26px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(80,40,160,0.15);
+  overflow: hidden;
+}
+
+/* Decorative curves */
+.certificate::before,
+.certificate::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#b98bfd,#7c5cff);
+  opacity: 0.18;
+}
+
+.certificate::before {
+  width: 520px;
+  height: 520px;
+  top: -180px;
+  left: -180px;
+}
+
+.certificate::after {
+  width: 520px;
+  height: 520px;
+  bottom: -200px;
+  right: -200px;
+}
+
+/* Inner frame */
+.cert-inner {
+  background: #ffffff;
+  height: 100%;
+  border-radius: 22px;
+  padding: 60px 80px;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.cert-header h1 {
+  margin: 0;
+  font-size: 38px;
+  letter-spacing: 4px;
+  color: #3a2c6b;
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #7b6aa8;
+}
+
+/* ===============================
+   BODY TEXT
+================================ */
+.cert-line {
+  margin-top: 50px;
+  font-size: 15px;
+  color: #666;
+}
+
+.cert-name {
+  margin: 18px 0 24px;
+  font-size: 46px;
+  font-weight: 600;
+  color: #7a5ad8;
+  font-family: "Playfair Display", serif;
+}
+
+.cert-body {
+  max-width: 640px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #444;
+}
+
+.cert-body strong {
+  color: #5a42c8;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.cert-date {
+  margin-top: 40px;
+  font-size: 14px;
+  color: #777;
+}
+
+.cert-footer {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.signature {
+  text-align: center;
+}
+
+.sig-name {
+  display: block;
+  font-weight: 600;
+  color: #3a2c6b;
+}
+
+.sig-role {
+  font-size: 12px;
+  color: #888;
+}
+/* ===============================
+   MODAL OVERLAY
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 12, 56, 0.65);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Show modal */
+.modal-overlay.active {
+  display: flex;
+}
+
+/* ===============================
+   MODAL BOX
+================================ */
+.modal-box {
+  background: var(--white);
+  width: 420px;
+  max-width: 90%;
+  border-radius: 22px;
+  padding: 26px 28px 30px;
+  box-shadow: 0 30px 80px rgba(28,12,56,0.25);
+  animation: modalScale 0.35s ease;
+  position: relative;
+  text-align: center;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.modal-box h2 {
+  margin: 0;
+  font-size: 22px;
+  color: var(--text-dark);
+}
+
+.modal-subtitle {
+  margin: 8px 0 22px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ===============================
+   CLOSE BUTTON
+================================ */
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.modal-close:hover {
+  color: var(--text-dark);
+}
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn.primary {
+  background: var(--violet-500);
+  color: white;
+}
+
+.btn.secondary {
+  background: var(--violet-100);
+  color: var(--violet-900);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(28,12,56,0.15);
+}
+
+/* ===============================
+   FORM AREA
+================================ */
+#certificateForm {
+  margin-top: 16px;
+  text-align: left;
+}
+
+#certificateForm input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--violet-300);
+  margin-bottom: 12px;
+  outline: none;
+}
+
+/* ===============================
+   ANIMATION
+================================ */
+@keyframes modalScale {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.certificate {
+  display: none;
+}
+/* =========================================================
+for anchor tag
+========================================================= */
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+</style>
+<script src="theme.js"></script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">SkillSwap</div>
+
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item">
+      🏠 <span class="label">Dashboard</span>
+    </div>
+  </a>
+
+  <a href="explore.html" class="nav-link">
+    <div class="nav-item">
+      🌍 <span class="label">Explore</span>
+    </div>
+  </a>
+
+  <a href="connect.html" class="nav-link">
+    <div class="nav-item">
+      🤝 <span class="label">Connect</span>
+    </div>
+  </a>
+
+  <a href="messages.html" class="nav-link">
+    <div class="nav-item ">
+      💬 <span class="label">Messages</span>
+    </div>
+  </a>
+
+  <a href="progress.html" class="nav-link">
+    <div class="nav-item active">
+      📊 <span class="label">Progress</span>
+    </div>
+  </a>
+
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      👤 <span class="label">Profile</span>
+    </div>
+  </a>
+</div>
+
+</div>
+<!-- MAIN -->
+<div class="main">
+
+  <div class="page-header">
+    <h1>Your Progress</h1>
+    <p>Track your learning journey and skill exchanges</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Sessions Completed</h3>
+      <div class="value" id="sessionsCount">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Active Exchanges</h3>
+      <div class="value" id="activeCount">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Skills Learned</h3>
+      <div class="value" id="skillsCount">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Weekly Streak</h3>
+      <div class="value" id="streakCount">0 🔥</div>
+    </div>
+  </div>
+  <!-- for last updated-->
+<p style="font-size:12px;color:#888">
+  Last updated: <span id="lastUpdated"></span>
+</p>
+
+  <!-- EXPORT -->
+  <button id="exportBtn" class="btn">📄 Export Progress</button>
+  <!-- Certificate-->
+  <button class = "btn" onclick="openCertificateModal()">🏆 Download Certificate</button>
+
+  <!-- SKILL -->
+<h2>Skill Progress</h2>
+  <div id="skillProgressList"></div>
+
+  <!-- ACTIVITY -->
+  <h2>Recent Activity</h2>
+<div id="recentActivityList"></div>
+
+<!-- CERTIFICATE MODAL -->
+<!-- Overlay -->
+<div id="certificateModal" class="modal-overlay">
+
+  <!-- Modal box -->
+  <div class="modal-box">
+
+    <button class="modal-close" onclick="closeCertificateModal()">✕</button>
+
+    <h2>Download Certificate</h2>
+    <p class="modal-subtitle">
+      Choose certificate type and fill required details
+    </p>
+
+    <!-- Buttons to choose type -->
+    <div class="modal-actions">
+      <button class="btn primary" onclick="openSelfStudyCert()">
+        📘 Self Study Certificate
+      </button>
+      <button class="btn secondary" onclick="openExchangeCert()">
+        🤝 Skill Exchange Certificate
+      </button>
+    </div>
+
+    <!-- Dynamic form goes here -->
+    <div id="certificateForm"></div>
+
+  </div>
+</div>
+
+<!--certificate-->
+<div class="certificate">
+  <div class="cert-inner">
+
+    <div class="cert-header">
+      <h1>CERTIFICATE</h1>
+      <p class="subtitle">OF PARTICIPATION</p>
+    </div>
+
+    <p class="cert-line">This certificate is awarded to</p>
+
+    <h2 class="cert-name">John Doe</h2>
+
+    <!-- SELF STUDY TEXT -->
+    <p class="cert-body">
+      for successfully completing self-study in
+      <strong>UI / UX Design</strong>
+      through SkillSwap.
+    </p>
+
+    <!-- EXCHANGE TEXT (toggle via JS) -->
+    <!--
+    <p class="cert-body">
+      for successfully exchanging skills:
+      <br />
+      <strong>John Doe</strong> taught <strong>UI / UX Design</strong><br />
+      <strong>Jane Smith</strong> taught <strong>Public Speaking</strong>
+    </p>
+    -->
+
+    <p class="cert-date">Issued on September 22, 2026</p>
+
+    <div class="cert-footer">
+      <div class="signature">
+        <span class="sig-name">SkillSwap</span>
+        <span class="sig-role">Learning Platform</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+<img id="sigAlex" src="sign1.png" style="display:none">
+<img id="sigRiya" src="sign2.png" style="display:none">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+let lastCompletedExchange = null;
+/* =========================================================
+   LOAD DASHBOARD DATA (SOURCE OF TRUTH)
+========================================================= */
+let dashboardState = {};
+
+async function loadProgressFromBackend() {
+  const userId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+  if (!userId) {
+    console.error("User not logged in");
+    return;
+  }
+
+  const res = await fetch(`http://127.0.0.1:8000/api/progress/?user_id=${userId}`, {
+    credentials: "include"
+  });
+
+  const data = await res.json();
+  dashboardState = data;
+
+  calculateProgressStats();
+  renderSkillProgress();
+  renderRecentActivity();
+}
+
+/* =========================================================
+   CALCULATE OVERALL STATS
+========================================================= */
+function calculateProgressStats() {
+  document.getElementById("sessionsCount").textContent =
+    dashboardState.sessions || 0;
+
+  document.getElementById("activeCount").textContent =
+    dashboardState.active_exchanges || 0;
+
+  document.getElementById("skillsCount").textContent =
+    dashboardState.skills_learned || 0;
+
+  document.getElementById("streakCount").textContent =
+    (dashboardState.streak || 0) + " 🔥";
+}
+/* =========================================================
+   WEEKLY STREAK (BASED ON COMPLETED DAYS)
+========================================================= */
+function calculateStreak() {
+  const events = [];
+
+  const days = new Set(
+    events
+      .filter(e => e.completed)
+      .map(e => e.date)
+  );
+
+  return days.size;
+}
+
+document.getElementById("streakCount").textContent =
+  calculateStreak() + " 🔥";
+
+/* =========================================================
+   CERTIFICATE MODAL CONTROL
+========================================================= */
+function openCertificateModal() {
+  document.getElementById("certificateModal").style.display = "flex";
+}
+
+function closeCertificateModal() {
+  document.getElementById("certificateModal").style.display = "none";
+  document.querySelector(".modal-actions").style.display = "flex";
+  document.getElementById("certificateForm").innerHTML = "";
+}
+
+/* =========================================================
+   CERTIFICATE ELIGIBILITY
+========================================================= */
+function canDownloadSelfStudyCert() {
+  return dashboardState.roadmaps?.some(r => r.completed);
+}
+
+/* =========================================================
+   GATE POPUP (THIS WAS MISSING ❗)
+========================================================= */
+function showGatePopup(title, message) {
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position:fixed;
+    inset:0;
+    background:rgba(28,12,56,0.65);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10000;
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      background:#fff;
+      padding:26px;
+      border-radius:20px;
+      width:360px;
+      text-align:center;
+    ">
+      <h3 style="margin-bottom:12px;color:#3a2c6b">${title}</h3>
+      <p style="font-size:14px;color:#555;white-space:pre-line">
+        ${message}
+      </p>
+      <button class="btn" style="margin-top:16px"
+        onclick="this.closest('div').parentElement.remove()">
+        Okie 😊
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+/* =========================================================
+   SELF STUDY CERTIFICATE FLOW
+========================================================= */
+function hasSelfStudyCertificate() {
+  return Array.isArray(dashboardState.certificates) &&
+    dashboardState.certificates.some(c => c.type === "self-study");
+}
+function selfStudyAlreadyDownloadedGate(skill) {
+
+  const alreadyIssued =
+    Array.isArray(dashboardState.certificates) &&
+    dashboardState.certificates.some(
+      c => c.type === "self-study" && c.skill === skill
+    );
+
+  if (alreadyIssued) {
+
+    showGatePopup(
+      "Certificate Already Downloaded",
+      "You have already downloaded the certificate for this skill.\n\nYou can re-download it from the Profile page."
+    );
+
+    return true;
+  }
+
+  return false;
+}
+/* =========================================================
+   OPEN SELF STUDY CERTIFICATE
+========================================================= */
+async function openSelfStudyCert() {
+
+  document.getElementById("certificateForm").innerHTML = "";
+
+  const userId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/progress/?user_id=${userId}&t=${Date.now()}`,
+    { credentials: "include", cache: "no-store" }
+  );
+
+  if (!res.ok) {
+    showGatePopup("Server Error", "Unable to verify your progress. Try again.");
+    return;
+  }
+
+  dashboardState = await res.json();
+
+if (!selfStudyGate()) return;
+
+const completedRoadmaps = (dashboardState.roadmaps || []).filter(r => r.completed);
+
+if (!completedRoadmaps.length) {
+  showGatePopup("Self-Study Not Completed", "Complete a roadmap to unlock certificate.");
+  return;
+}
+
+const latest = completedRoadmaps.sort(
+  (a, b) =>
+    new Date(b.completed_at || b.updated_at || 0) -
+    new Date(a.completed_at || a.updated_at || 0)
+)[0];
+
+if (selfStudyAlreadyDownloadedGate(latest.skill)) return;
+
+  const username =
+  JSON.parse(localStorage.getItem("skillswap_state"))?.user?.username;
+
+document.querySelector(".modal-actions").style.display = "none";
+
+document.getElementById("certificateForm").innerHTML = `
+  <h3>Self Study Certificate</h3>
+
+  <input id="studentName" value="${username || ""}" />
+  <input id="skillName" value="${latest.skill}" readonly />
+
+  <button class="btn" onclick="generateSelfStudyCertificate()">Generate Certificate</button>
+`;
+}
+function selfStudyGate() {
+
+  const completed = dashboardState.roadmaps?.some(r => r.completed);
+
+  if (!completed) {
+
+    showGatePopup(
+      "Self-Study Not Completed",
+      "Complete at least one learning roadmap to unlock this certificate 📘"
+    );
+
+    return false;
+  }
+
+  return true;
+}
+/* =========================================================
+   NEEDS TO WORK THE FORM
+========================================================= */
+function generateCertificateId() {
+  return "SS-" + Date.now().toString(36).toUpperCase();
+}
+
+function verificationURL(certId) {
+  return `https://skillswap.app/verify/${certId}`;
+}
+
+/* =========================================================
+   SELF STUDY CERTIFICATE
+========================================================= */
+async function generateSelfStudyCertificate() {
+ const userId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+const res = await fetch(
+  `http://127.0.0.1:8000/api/progress/?user_id=${userId}&t=` + Date.now(),
+  {
+    credentials: "include",
+    cache: "no-store"
+  }
+);
+  dashboardState = await res.json();
+
+  const selfStudyCompleted = dashboardState.roadmaps?.some(r => r.completed);
+
+  if (!selfStudyCompleted) {
+    showGatePopup(
+      "Self-Study Not Completed",
+      "You must complete at least one learning roadmap to unlock this certificate."
+    );
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+
+  const nameEl  = document.getElementById("studentName");
+  const skillEl = document.getElementById("skillName");
+
+  if (!nameEl || !skillEl) {
+    alert("Form not ready");
+    return;
+  }
+
+  const name  = nameEl.value.trim();
+  const latestCompletedRoadmap = [...(dashboardState.roadmaps || [])]
+  .filter(r => r.completed)
+  .sort((a,b) =>
+  new Date(b.completed_at || b.updated_at || 0)
+  - new Date(a.completed_at || a.updated_at || 0)
+)[0];
+
+const skill = latestCompletedRoadmap?.skill || skillEl.value.trim();
+
+  if (!name || !skill) {
+    alert("Please fill all fields");
+    return;
+  }
+  /* =========================================================
+     INIT PDF
+  ========================================================= */
+  const doc = new jsPDF("landscape", "pt");
+  const date   = new Date().toLocaleDateString();
+  const certId = generateCertificateId();
+
+  /* =========================================================
+     BACKGROUND
+  ========================================================= */
+  doc.setFillColor(248, 243, 255);
+  doc.rect(0, 0, 842, 595, "F");
+
+  // Decorative blobs
+  doc.setFillColor(185, 139, 253);
+  doc.circle(90, 90, 160, "F");
+  doc.circle(760, 520, 180, "F");
+
+  // Inner frame
+  doc.setFillColor(255);
+  doc.roundedRect(40, 40, 762, 515, 22, 22, "F");
+
+  /* =========================================================
+     HEADER
+  ========================================================= */
+  doc.setFontSize(34);
+  doc.setTextColor(58, 44, 107);
+  doc.text("CERTIFICATE", 421, 120, { align: "center" });
+
+  doc.setFontSize(14);
+  doc.setTextColor(123, 106, 168);
+  doc.text("OF SELF-STUDY COMPLETION", 421, 145, { align: "center" });
+
+  /* =========================================================
+     BODY
+  ========================================================= */
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(16);
+  doc.setTextColor(102);
+  doc.text(
+    "This certificate recognizes the successful completion of independent self-study by",
+    421,
+    205,
+    { align: "center" }
+  );
+
+  doc.setFont("times", "bold");
+  doc.setFontSize(40);
+  doc.setTextColor(122, 90, 216);
+  doc.text(name, 421, 260, { align: "center" });
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(15);
+  doc.setTextColor(90);
+  doc.text(
+    "demonstrating consistency, discipline, and active learning in the subject of",
+    421,
+    305,
+    { align: "center" }
+  );
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.setTextColor(90, 66, 200);
+  doc.text(skill, 421, 340, { align: "center" });
+
+  /* =========================================================
+     FOOTER INFO
+  ========================================================= */
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(14);
+  doc.setTextColor(120);
+  doc.text(`Issued on ${date}`, 421, 395, { align: "center" });
+
+  doc.setFontSize(11);
+  doc.text(`Certificate ID: ${certId}`, 421, 420, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(150);
+  doc.text(
+    verificationURL(certId),
+    421,
+    440,
+    { align: "center" }
+  );
+
+  /* =========================================================
+     OFFICIAL SEAL
+  ========================================================= */
+  const sealX = 610;
+  const sealY = 105;
+  const sealW = 170;
+  const sealH = 85;
+
+  doc.setDrawColor(70, 90, 200);
+  doc.setLineWidth(2.5);
+  doc.roundedRect(sealX, sealY, sealW, sealH, 6, 6);
+
+  doc.setLineWidth(1.1);
+  doc.roundedRect(
+    sealX + 8,
+    sealY + 8,
+    sealW - 16,
+    sealH - 16,
+    4,
+    4
+  );
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(70, 90, 200);
+  doc.text(
+    "SKILLSWAP OFFICIAL",
+    sealX + sealW / 2,
+    sealY + 26,
+    { align: "center" }
+  );
+
+  doc.setLineWidth(0.9);
+  doc.line(
+    sealX + 22,
+    sealY + 34,
+    sealX + sealW - 22,
+    sealY + 34
+  );
+
+  doc.setFontSize(12);
+  doc.text(
+    "2026",
+    sealX + sealW / 2,
+    sealY + 52,
+    { align: "center" }
+  );
+
+  doc.setFontSize(8.5);
+  doc.text(
+    "VERIFIED SELF-LEARNING",
+    sealX + sealW / 2,
+    sealY + 70,
+    { align: "center" }
+  );
+
+  /* =========================================================
+     SIGNATURES
+  ========================================================= */
+  // ===============================
+// SIGNATURE IMAGES
+// ===============================
+
+const sigAlex = document.getElementById("sigAlex");
+const sigRiya = document.getElementById("sigRiya");
+
+// draw signature images
+doc.addImage(sigAlex, "PNG", 200, 445, 100, 40);
+doc.addImage(sigRiya, "PNG", 540, 445, 100, 40);
+
+// ===============================
+// Signature lines
+// ===============================
+
+doc.setDrawColor(160);
+doc.setLineWidth(1);
+
+doc.line(180, 490, 320, 490);
+doc.line(520, 490, 660, 490);
+
+// ===============================
+// Names & titles
+// ===============================
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(11);
+doc.setTextColor(70);
+
+doc.text("Alex Morgan", 250, 512, { align: "center" });
+doc.text("Platform Director", 250, 528, { align: "center" });
+
+doc.text("Riya Sharma", 590, 512, { align: "center" });
+doc.text("Learning Lead", 590, 528, { align: "center" });
+
+  /* =========================================================
+     BRAND
+  ========================================================= */
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(58, 44, 107);
+  doc.text("SkillSwap", 421, 505, { align: "center" });
+
+  doc.setFontSize(11);
+  doc.setTextColor(136);
+  doc.text("Learning Platform", 421, 525, { align: "center" });
+ /* =========================================================
+     SAVE CERTIFICATE (SINGLE SOURCE OF TRUTH)
+  ========================================================= */
+  
+
+  /* =========================================================
+     OUTPUT
+  ========================================================= */
+  dashboardState.certificates = dashboardState.certificates || [];
+
+dashboardState.certificates.push({
+  id: certId,
+  type: "self-study",
+  skill: skill,
+  issuedOn: Date.now()
+});
+
+  await fetch("http://127.0.0.1:8000/api/certificates/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({
+  user_id: userId,
+  type: "self-study",
+  skill: skill,
+  certificate_id: certId
+})
+});
+
+await new Promise(resolve => setTimeout(resolve, 300));
+await loadProgressFromBackend();
+await renderRecentActivity();
+
+doc.save(`skillswap-${skill}-certificate.pdf`);
+closeCertificateModal();
+}
+/* =========================================================
+   EXCHANGE CERTIFICATE FLOW — OPEN FORM ONLY
+========================================================= */
+async function openExchangeCert() {
+  const userId = JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+  if (!userId) {
+    showGatePopup("Not logged in", "Please login again.");
+    return;
+  }
+
+  const res = await fetch(`http://127.0.0.1:8000/api/exchanges/?user_id=${userId}`);
+  const exchanges = await res.json();
+
+  const completedExchanges = exchanges.filter(e => e.status === "completed");
+
+  if (!completedExchanges.length) {
+    showGatePopup(
+      "Exchange Not Completed",
+      "Complete at least one skill exchange to unlock this certificate 🤝"
+    );
+    return;
+  }
+
+  const exchange = completedExchanges.sort(
+  (a,b)=> new Date(b.date + " " + (b.time || "00:00")) - new Date(a.date + " " + (a.time || "00:00"))
+)[0];
+  lastCompletedExchange = exchange;
+
+  document.querySelector(".modal-actions").style.display = "none";
+
+  const currentUserId =
+  JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+// detect who "you" are in the exchange
+const isUserA = Number(exchange.user_a_id) === Number(currentUserId);
+
+const yourName  = isUserA ? exchange.user_a_name : exchange.user_b_name;
+const otherName = isUserA ? exchange.user_b_name : exchange.user_a_name;
+
+document.getElementById("certificateForm").innerHTML = `
+  <h3>Skill Exchange Certificate</h3>
+
+  <p style="font-size:14px;color:#666;margin-bottom:10px">
+    Exchange completed between:
+  </p>
+
+  <strong>${yourName}</strong> ↔️ <strong>${otherName}</strong><br>
+  <small>${exchange.skill_a} ↔️ ${exchange.skill_b}</small>
+
+  <br><br>
+
+  <input
+    id="displayName"
+    placeholder="Your name (as it should appear)"
+    value="${yourName}"
+  />
+
+  <button class="btn" onclick="generateExchangeCertificate()">
+    Generate Certificate
+  </button>
+`;
+}
+/* =========================================================
+   EXCHANGE STUDY CERTIFICATE 
+========================================================= */
+async function generateExchangeCertificate() {
+  /* =========================================================
+     LOAD GLOBAL STATE (SAFE)
+  ========================================================= */
+  const globalState =
+    JSON.parse(localStorage.getItem("skillswap_state")) || {};
+
+  /* =========================================================
+     VALIDATE COMPLETED EXCHANGES ARRAY
+  ========================================================= */
+ if (!lastCompletedExchange) {
+  showGatePopup("Exchange Not Completed", "No completed exchange found.");
+  return;
+}
+
+const exchange = lastCompletedExchange;
+
+const currentUserId =
+  JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
+
+const isUserA = String(exchange.user_a_id) === String(currentUserId);
+
+const displayNameInput = document.getElementById("displayName");
+const displayName = displayNameInput?.value?.trim();
+
+if (!displayName) {
+  alert("Please enter your name");
+  return;
+}
+
+  /* =========================================================
+     PREVENT DUPLICATE CERTIFICATE
+  ========================================================= */
+  globalState.certificates = globalState.certificates || [];
+
+  const alreadyIssued = globalState.certificates.some(
+    c => c.type === "exchange" && c.exchangeId === exchange.id
+  );
+
+  if (alreadyIssued) {
+    showGatePopup(
+      "Certificate Already Issued",
+      "You have already generated a certificate for this exchange."
+    );
+    return;
+  }
+
+  /* =========================================================
+     EXCHANGE DATA (FIXED VARIABLE NAMES)
+  ========================================================= */
+const exchangeId = exchange.id;
+
+const skillA = exchange.skill_a;
+const skillB = exchange.skill_b;
+
+let userA = exchange.user_a_name;
+let userB = exchange.user_b_name;
+
+if (isUserA) {
+  userA = displayName;
+} else {
+  userB = displayName;
+}
+
+  /* =========================================================
+     INIT PDF
+  ========================================================= */
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("landscape", "pt");
+
+  const date = new Date().toLocaleDateString();
+  const certId = "SS-" + Date.now().toString(36).toUpperCase();
+
+ /* =========================================================
+   BACKGROUND (SAFE DRAW ORDER)
+========================================================= */
+doc.setDrawColor(255);
+doc.setFillColor(248, 243, 255);
+doc.rect(0, 0, 842, 595, "F");
+
+// Decorative blobs
+doc.setFillColor(185, 139, 253);
+doc.circle(90, 90, 160, "F");
+doc.circle(760, 520, 180, "F");
+
+// Inner frame
+doc.setFillColor(255, 255, 255);
+doc.roundedRect(40, 40, 762, 515, 22, 22, "F");
+
+/* =========================================================
+   HEADER (FONT-SAFE)
+========================================================= */
+doc.setFontSize(34);
+doc.setTextColor(58, 44, 107);
+doc.text("CERTIFICATE", 421, 120, { align: "center" });
+
+doc.setFontSize(14);
+doc.setTextColor(123, 106, 168);
+doc.text("OF SKILL EXCHANGE", 421, 145, { align: "center" });
+
+  /* =========================================================
+     BODY
+  ========================================================= */
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(16);
+  doc.setTextColor(102);
+  doc.text(
+    "This certifies a successful skill exchange between",
+    421,
+    205,
+    { align: "center" }
+  );
+
+  doc.setFont("times", "bold");
+  doc.setFontSize(28);
+  doc.setTextColor(122, 90, 216);
+  doc.text(`${userA} <-> ${userB}`, 421, 255, { align: "center" });
+  /* =========================================================
+     DESCRIPTION
+  ========================================================= */
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(14);
+  doc.setTextColor(90);
+  doc.text(
+    "This certificate recognizes consistent effort, skill sharing,\n" +
+    "and active participation within the SkillSwap learning community.",
+    421,
+    305,
+    { align: "center" }
+  );
+
+  /* =========================================================
+     SKILLS EXCHANGED
+  ========================================================= */
+  doc.setFontSize(16);
+  doc.setTextColor(68);
+ doc.text(`${userA} shared ${skillA}`, 421, 350, { align: "center" });
+doc.text(`${userB} shared ${skillB}`, 421, 375, { align: "center" });
+
+  /* =========================================================
+     FOOTER
+  ========================================================= */
+  doc.setFontSize(14);
+  doc.text(`Issued on ${date}`, 421, 415, { align: "center" });
+
+  doc.setFontSize(11);
+  doc.text(`Certificate ID: ${certId}`, 421, 440, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(150);
+  doc.text(verificationURL(certId), 421, 460, { align: "center" });
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(58, 44, 107);
+  doc.text("SkillSwap", 421, 505, { align: "center" });
+
+  doc.setFontSize(11);
+  doc.setTextColor(136);
+  doc.text("Learning Platform", 421, 525, { align: "center" });
+
+/* =========================================================
+   OFFICIAL RECTANGULAR SEAL — COMPACT VERSION
+========================================================= */
+
+const sealX = 610;   // move slightly right
+const sealY = 105;   // move slightly down
+const sealW = 170;   // reduced width
+const sealH = 85;    // reduced height
+
+// Outer rectangle
+doc.setDrawColor(70, 90, 200);
+doc.setLineWidth(2.5);
+doc.roundedRect(sealX, sealY, sealW, sealH, 6, 6);
+
+// Inner rectangle
+doc.setLineWidth(1.1);
+doc.roundedRect(
+  sealX + 8,
+  sealY + 8,
+  sealW - 16,
+  sealH - 16,
+  4,
+  4
+);
+
+// Header text
+doc.setFont("helvetica", "bold");
+doc.setFontSize(10);
+doc.setTextColor(70, 90, 200);
+doc.text(
+  "SKILLSWAP OFFICIAL",
+  sealX + sealW / 2,
+  sealY + 26,
+  { align: "center" }
+);
+
+// Divider line
+doc.setLineWidth(0.9);
+doc.line(
+  sealX + 22,
+  sealY + 34,
+  sealX + sealW - 22,
+  sealY + 34
+);
+
+// Center year
+doc.setFontSize(12);
+doc.text(
+  "2026",
+  sealX + sealW / 2,
+  sealY + 52,
+  { align: "center" }
+);
+
+// Footer text
+doc.setFontSize(8.5);
+doc.text(
+  "CERTIFIED LEARNING PLATFORM",
+  sealX + sealW / 2,
+  sealY + 70,
+  { align: "center" }
+);
+
+/* =========================================================
+   SIGNATURE IMAGES (REAL)
+========================================================= */
+ // ===============================
+// SIGNATURE IMAGES
+// ===============================
+
+const sigAlex = document.getElementById("sigAlex");
+const sigRiya = document.getElementById("sigRiya");
+
+// draw signature images
+doc.addImage(sigAlex, "PNG", 200, 445, 100, 40);
+doc.addImage(sigRiya, "PNG", 540, 445, 100, 40);
+
+// ===============================
+// Signature lines
+// ===============================
+
+doc.setDrawColor(160);
+doc.setLineWidth(1);
+
+doc.line(180, 490, 320, 490);
+doc.line(520, 490, 660, 490);
+
+// ===============================
+// Names & titles
+// ===============================
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(11);
+doc.setTextColor(70);
+
+doc.text("Alex Morgan", 250, 512, { align: "center" });
+doc.text("Platform Director", 250, 528, { align: "center" });
+
+doc.text("Riya Sharma", 590, 512, { align: "center" });
+doc.text("Learning Lead", 590, 528, { align: "center" });
+
+
+/* =========================================================
+     SAVE CERTIFICATE (SINGLE SOURCE OF TRUTH)
+  ========================================================= */
+ globalState.activity = globalState.activity || [];
+
+  globalState.certificates.push({
+    id: certId,
+    type: "exchange",
+    exchangeId,
+    participants: [userA, userB],
+    skills: [skillA, skillB],
+    issuedOn: Date.now()
+  });
+
+  globalState.activity.push({
+    text: `Exchange certificate earned: ${skillA} ↔ ${skillB}`,
+    date: Date.now()
+  });
+
+  localStorage.setItem(
+    "skillswap_state",
+    JSON.stringify(globalState)
+  );
+  await fetch("http://127.0.0.1:8000/api/certificates/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({
+    user_id: currentUserId,
+    type: "exchange",
+    skill: skillA + " ↔ " + skillB,
+    certificate_id: certId
+  })
+});
+  /* =========================================================
+     OUTPUT
+  ========================================================= */
+  doc.save("skillswap-exchange-study-certificate.pdf");
+  
+closeCertificateModal();
+
+// 🔄 reset modal so next exchange is fresh
+document.getElementById("certificateForm").innerHTML = "";
+document.querySelector(".modal-actions").style.display = "flex";
+
+}
+  /* =========================================================
+     HELPER FUNCTION TO CLEAN TEXT 
+  ========================================================= */
+function cleanText(val) {
+
+  if (!val) return "";
+
+  let text = String(val);
+
+  text = text
+    .replace(/<[^>]*>/g, "")
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/\s+/g," ")
+    .trim();
+
+  return text;
+}
+/* =========================================================
+   EXPORT
+========================================================= */
+document.getElementById("exportBtn").onclick = () => {
+  if (!window.jspdf) {
+    alert("PDF library not loaded. Please refresh the page.");
+    return;
+  }
+
+  if (!dashboardState || !dashboardState.roadmaps) {
+    alert("Progress data is still loading. Try again in 2 seconds.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 15;
+  const line = text => {
+  if (y > 270) {
+    doc.addPage();
+    y = 15;
+  }
+
+  doc.text(text, 14, y);
+  y += 8;
+};
+
+  const sessions = dashboardState.sessions || 0;
+  const exchanges = dashboardState.total_exchanges || 0;
+  const skills = dashboardState.skills_learned || 0;
+  const streak = dashboardState.streak || 0;
+
+  const completedSkills = [...new Set(
+  (dashboardState.roadmaps || [])
+    .filter(r => r.completed)
+    .map(r => r.skill.trim().toLowerCase())
+)].map(s => s.charAt(0).toUpperCase() + s.slice(1));
+
+const ongoingSkills = [...new Set(
+  (dashboardState.roadmaps || [])
+    .filter(r => !r.completed)
+    .map(r => r.skill.trim().toLowerCase())
+)].map(s => s.charAt(0).toUpperCase() + s.slice(1));
+
+  const activities = (dashboardState.activity || [])
+  .slice()
+  .sort((a, b) => {
+    const ta = new Date(a.created_at || a.date || 0).getTime();
+    const tb = new Date(b.created_at || b.date || 0).getTime();
+    return tb - ta;
+  })
+  .slice(0, 5)
+  .map(a => {
+    const text = cleanText(a.text || a.message || a.description);
+    const time = new Date(a.created_at || a.date || Date.now()).toLocaleString();
+    return `${text} (${time})`;
+  });
+  const completedRoadmaps =
+    (dashboardState.roadmaps || []).filter(r => r.completed).length;
+
+  const totalExchanges = dashboardState.total_exchanges || 0;
+  // ---- PDF CONTENT ----
+  doc.setFontSize(18);
+  line("SkillSwap Progress Report");
+
+  doc.setFontSize(11);
+  doc.setTextColor(120);
+  line(`Generated on: ${new Date().toLocaleString()}`);
+
+  // 🔹 Divider line after generated date
+  y += 2;
+  doc.setDrawColor(180);
+  doc.line(14, y, 196, y);
+  y += 8;
+
+  doc.setTextColor(0);
+
+  doc.setFontSize(14);
+  line("Overview");
+  doc.setFontSize(11);
+  line(`Sessions Completed: ${sessions}`);
+  line(`Active Exchanges: ${exchanges}`);
+  line(`Skills Learned: ${skills}`);
+  line(`Weekly Streak: ${streak} days`);
+
+  y += 6;
+  doc.setFontSize(14);
+line("Skills Overview");
+
+doc.setFontSize(11);
+line("Completed Skills:");
+
+if (completedSkills.length === 0) {
+  line("None yet");
+} else {
+  completedSkills.forEach(skill => line("• " + skill));
+}
+line("Ongoing Skills:");
+
+if (ongoingSkills.length === 0) {
+  line("None");
+} else {
+  ongoingSkills.forEach(skill => line("• " + skill));
+}
+
+  y += 6;
+  doc.setFontSize(14);
+  line("Recent Activity");
+  doc.setFontSize(11);
+  activities.forEach(line);
+
+  y += 6;
+  doc.setFontSize(14);
+  line("Dashboard Summary");
+  doc.setFontSize(11);
+  line(`Completed Roadmaps: ${completedRoadmaps}`);
+  line(`Total Exchanges: ${totalExchanges}`);
+
+  y += 10;
+  doc.setFontSize(12);
+  line("Keep learning. Every small step counts.");
+  line("You're building something amazing.");
+
+  // ✅ FOOTER — must be BEFORE save
+  doc.setFontSize(10);
+  doc.setTextColor(150);
+  doc.text(
+  "SkillSwap • Learn by exchanging skills",
+  14,
+  doc.internal.pageSize.height - 10
+);
+
+  // ✅ SAVE LAST
+  doc.save("skillswap-progress.pdf");
+};
+/* =========================================================
+   RENDER SKILL PROGRESS
+========================================================= */
+function renderSkillProgress() {
+  const container = document.getElementById("skillProgressList");
+
+  const roadmaps = (dashboardState.roadmaps || []).slice();
+
+  // 🔥 sort: ongoing first, completed last
+  roadmaps.sort((a, b) => {
+    if (a.completed === b.completed) return 0;
+    return a.completed ? 1 : -1;
+  });
+
+  if (!roadmaps.length) {
+    container.innerHTML = `<p>No self-study progress yet</p>`;
+    return;
+  }
+
+  container.innerHTML = roadmaps.map(r => {
+    const percent = r.steps
+      ? Math.round((r.completed_steps / r.steps) * 100)
+      : 0;
+
+    return `
+      <div class="skill-card">
+        <div class="skill-header">
+          <span>${r.skill}</span>
+          <span>${r.completed ? "✓ Completed" : percent + "%"}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${percent}%"></div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+document.addEventListener("DOMContentLoaded", loadProgressFromBackend);
+
+
+
+/* =========================================================
+   RENDER RECENT ACTIVITY (SOURCE: dashboardState.activity)
+========================================================= */
+function renderRecentActivity() {
+  const container = document.getElementById("recentActivityList");
+  const activities = (dashboardState.activity || []).slice(0,5);
+
+  if (!activities.length) {
+    container.innerHTML = `<p style="color:#777">No recent activity yet</p>`;
+    return;
+  }
+
+  container.innerHTML = activities.map(a => `
+  <div class="activity-item">
+    ${cleanText(a.text || a.message || a.description)}<br>
+    <span>${new Date(a.created_at || a.date).toLocaleString()}</span>
+  </div>
+`).join("");
+}
+
+
+/* =========================================================
+   HELPER ACTIVITY
+========================================================= */
+function formatTimeAgo(activity) {
+  // Prefer ISO date, fallback to numeric timestamp
+  let time = null;
+
+  if (activity.date) {
+    time = new Date(activity.date).getTime();
+  }
+
+  if (!time && activity.time) {
+    time = Number(activity.time);
+  }
+
+  if (!time || isNaN(time)) return "just now";
+
+  const diff = Date.now() - time;
+  const mins = Math.floor(diff / 60000);
+
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} minute${mins > 1 ? "s" : ""} ago`;
+
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+}
+
+/* =========================================================
+FOR LAST UPDATED
+========================================================= */
+document.getElementById("lastUpdated").textContent =
+  new Date().toLocaleString();
+//force refresh
+if (localStorage.getItem("forceProgressRefresh")) {
+  localStorage.removeItem("forceProgressRefresh");
+  loadProgressFromBackend();
+}
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+  });
+</script>
+
+</body>
+</html>

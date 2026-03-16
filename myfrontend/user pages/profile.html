@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSwap – Profile</title>
+
+<style>
+/* =========================================================
+   ROOT VARIABLES (SHARED)
+========================================================= */
+:root {
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* DARK MODE */
+body.dark {
+  --bg-main:#141021;
+  --white:#1E1A2E;
+  --text-dark:#F4F2FA;
+  --text-muted:#B6AEDC;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+  width: 80px;
+  background: var(--violet-900);
+  padding: 20px 12px;
+  transition: width 0.35s ease;
+}
+.sidebar:hover { width: 230px; }
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transition: 0.3s;
+}
+.sidebar:hover .brand { opacity: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+.nav-item .label { opacity: 0; }
+.sidebar:hover .label { opacity: 1; }
+
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+.page-header p {
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(28,12,56,0.08);
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+/* =========================================================
+   PROFILE HEADER
+========================================================= */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#b98bfd,#7c5cff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  font-weight: 700;
+}
+
+.profile-meta h2 {
+  margin: 0;
+}
+.profile-meta p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* =========================================================
+   TAGS
+========================================================= */
+.tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--violet-100);
+  color: var(--violet-900);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat .value {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.stat span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+input, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--violet-300);
+  margin-bottom: 12px;
+  outline: none;
+}
+
+textarea {
+  resize: none;
+}
+
+.btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--violet-500);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* =========================================================
+   for the certificate
+========================================================= */
+.certificate-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--violet-100);
+  margin-bottom: 10px;
+}
+
+.certificate-item span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.certificate-item button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  color: var(--violet-700);
+  cursor: pointer;
+}
+.progress-bar {
+  height: 10px;
+  background: var(--violet-100);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--violet-500);
+  width: 0;
+  transition: width 0.6s ease;
+}
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--violet-900);
+  color: white;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* =========================================================
+   MODAL (LOGOUT)
+========================================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 26px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.modal-box h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-subtitle {
+  margin: 10px 0 22px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn.secondary {
+  background: #ddd;
+  color: #222;
+}
+
+.btn.primary {
+  background: var(--violet-500);
+}
+/* =========================================================
+   REPORT MODAL – POLISHED UI
+========================================================= */
+
+#reportModal .modal-box {
+  width: 420px;
+  max-width: 92%;
+  padding: 30px 28px;
+  border-radius: 22px;
+  text-align: left;
+}
+
+/* Title */
+#reportModal h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+/* Subtitle */
+#reportModal .modal-subtitle {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 22px;
+  color: var(--text-muted);
+}
+
+/* Form fields */
+#reportModal select,
+#reportModal input[type="text"],
+#reportModal textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--violet-300);
+  margin-bottom: 14px;
+  font-size: 14px;
+  outline: none;
+  background: var(--white);
+}
+
+/* Textarea */
+#reportModal textarea {
+  resize: none;
+  line-height: 1.5;
+}
+
+/* Focus state */
+#reportModal select:focus,
+#reportModal input:focus,
+#reportModal textarea:focus {
+  border-color: var(--violet-500);
+  box-shadow: 0 0 0 3px rgba(116,95,141,0.15);
+}
+
+/* File upload wrapper */
+#reportModal input[type="file"] {
+  border: 1px dashed var(--violet-300);
+  padding: 12px;
+  border-radius: 14px;
+  background: #faf9ff;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+/* Action buttons */
+#reportModal .modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#reportModal .btn {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+}
+
+/* Cancel button */
+#reportModal .btn.secondary {
+  background: #e6e6e6;
+  color: #333;
+}
+
+/* Submit button */
+#reportModal .btn.primary {
+  background: var(--violet-500);
+  color: #fff;
+}
+
+/* Hover polish */
+#reportModal .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(28,12,56,0.18);
+}
+#reportModal .modal-box {
+  animation: modalScale 0.3s ease;
+}
+
+</style>
+
+<script src="theme.js"></script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">SkillSwap</div>
+
+  <a href="dashboard.html" class="nav-link"><div class="nav-item">🏠 <span class="label">Dashboard</span></div></a>
+  <a href="explore.html"   class="nav-link"><div class="nav-item">🌍 <span class="label">Explore</span></div></a>
+  <a href="connect.html"   class="nav-link"><div class="nav-item">🤝 <span class="label">Connect</span></div></a>
+  <a href="messages.html"  class="nav-link"><div class="nav-item">💬 <span class="label">Messages</span></div></a>
+  <a href="progress.html"  class="nav-link"><div class="nav-item">📊 <span class="label">Progress</span></div></a>
+  <a href="profile.html"   class="nav-link">
+    <div class="nav-item active">👤 <span class="label">Profile</span></div>
+  </a>
+</div>
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Your Profile</h1>
+    <p>Manage your identity and learning footprint</p>
+  </div>
+
+  <!-- PROFILE HEADER -->
+  <div class="card profile-header" style="justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:20px">
+      <div class="avatar" id="avatar">S</div>
+      <div class="profile-meta">
+        <input
+          id="nameInput"
+          placeholder="Your name"
+          style="font-size:22px;font-weight:600;border:none;background:transparent;padding:0"
+        />
+        <p id="memberSince">Member since —</p>
+      </div>
+    </div>
+
+    <button class="btn" style="background:#3b2a6f" onclick="openLogoutModal()">
+      🚪 Logout
+    </button>
+  </div>
+
+  <!-- PROFILE COMPLETION -->
+  <div class="card">
+    <h3>Profile Completion</h3>
+    <div class="progress-bar">
+      <div id="profileProgress" class="progress-fill"></div>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-top:8px">
+      Complete your profile to build trust with learners.
+    </p>
+  </div>
+
+  <!-- ABOUT YOU -->
+  <div class="card">
+    <h3>About You</h3>
+
+    <input id="headline" placeholder="Your headline (e.g. UI Designer)" />
+    <input id="location" placeholder="Location" />
+    <input id="website" placeholder="Website / Portfolio" />
+    <textarea id="bio" rows="3" placeholder="Write a short bio..."></textarea>
+
+    <button class="btn" onclick="saveProfile()">Save Profile</button>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="card">
+    <h3>Skills You’re Learning</h3>
+    <div class="tag-group" id="learningSkills"></div>
+  </div>
+
+  <!-- QUICK METRICS -->
+  <div class="card">
+    <div class="stats-row">
+      <div class="stat">
+        <div class="value" id="skillsCount">0</div>
+        <span>Skills Practiced</span>
+      </div>
+      <div class="stat">
+        <div class="value" id="activityStreak">0</div>
+        <span>Day Streak</span>
+      </div>
+      <div class="stat">
+  <div class="value" id="ratingsCount">0</div>
+  <span>User Ratings</span>
+</div>
+    </div>
+  </div>
+<div class="card">
+  <h3>User Ratings</h3>
+
+  <p style="font-size:14px;color:var(--text-muted)">
+    Average rating from exchange partners
+  </p>
+
+  <h2 id="avgRating">⭐ 0.0 / 5</h2>
+
+  <div id="reviewsList" style="margin-top:16px"></div>
+</div>
+  <!-- PROFILE INSIGHTS -->
+  <div class="card">
+    <h3>Profile Insights</h3>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="value" id="profileViews">0</div>
+        <span>Profile Views</span>
+      </div>
+      <div class="stat">
+        <div class="value" id="postImpressions">0</div>
+        <span>Post Impressions</span>
+      </div>
+      <div class="stat">
+        <div class="value" id="followersCount">0</div>
+        <span>Followers</span>
+      </div>
+    </div>
+
+    <div class="stats-row" style="margin-top:16px">
+      <div class="stat">
+        <div class="value" id="postsCount">0</div>
+        <span>Posts</span>
+      </div>
+      <div class="stat">
+        <div class="value" id="likesCount">0</div>
+        <span>Likes</span>
+      </div>
+      <div class="stat">
+        <div class="value" id="commentsCount">0</div>
+        <span>Comments</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUBLIC PROFILE PREVIEW -->
+  <div class="card">
+    <h3>Public Profile Preview</h3>
+
+    <p style="font-size:18px;font-weight:600" id="previewName"></p>
+    <p id="previewHeadline" style="color:var(--text-muted);margin:4px 0"></p>
+    <p id="previewLocation" style="font-size:14px"></p>
+    <p id="previewBio" style="font-size:14px;margin-top:10px;line-height:1.5"></p>
+  </div>
+<!-- SAFETY & TRUST -->
+<div class="card">
+  <h3>Safety & Trust</h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px">
+    If you experience spam, abuse, or inappropriate behavior, report it here.
+  </p>
+
+  <button class="btn" style="background:#a33b3b" onclick="openReportModal()">
+    🚨 Report Spam or Abuse
+  </button>
+</div>
+
+  <!-- ACHIEVEMENTS -->
+  <div class="card">
+    <h3>Your Achievements</h3>
+    <div class="stats-row">
+  <div class="stat">
+    <div class="value" id="completedRoadmaps">0</div>
+    <span>Roadmaps</span>
+  </div>
+  <div class="stat">
+    <div class="value" id="completedExchanges">0</div>
+    <span>Exchanges</span>
+  </div>
+  <div class="stat">
+    <div class="value" id="certificatesCount">0</div>
+    <span>Certificates</span>
+  </div>
+</div>
+  </div>
+  <!-- CERTIFICATES -->
+  <div class="card">
+    <h3>Your Certificates</h3>
+    <div id="certificateList"></div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!--logout-->
+<div id="logoutModal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Log out?</h2>
+    <p class="modal-subtitle">
+      You’ll be returned to the home page.
+    </p>
+
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeLogoutModal()">Cancel</button>
+      <button class="btn primary" onclick="confirmLogout()">Log out</button>
+    </div>
+  </div>
+</div>
+<!-- REPORT MODAL -->
+<div id="reportModal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Report an Issue</h2>
+    <p class="modal-subtitle">
+      Your safety matters. Please share details below.
+    </p>
+
+    <select id="reportType">
+      <option value="">What happened?</option>
+      <option>Spam or fake account</option>
+      <option>Harassment or abuse</option>
+      <option>Inappropriate content</option>
+      <option>Scam or misleading exchange</option>
+      <option>Other</option>
+    </select>
+
+    <select id="reportLocation">
+      <option value="">Where did this happen?</option>
+      <option>Chat</option>
+      <option>Skill Exchange</option>
+      <option>Profile</option>
+      <option>Post / Feed</option>
+    </select>
+
+    <input id="reportedUser" placeholder="Name or username of the person" />
+
+    <textarea
+      id="reportDescription"
+      rows="3"
+      placeholder="Describe what happened"
+    ></textarea>
+
+    <input type="file" accept="image/*" />
+
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn secondary" onclick="closeReportModal()">Cancel</button>
+      <button class="btn primary" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   LOAD STATE
+========================================================= */
+
+const KEY = "skillswap_state";
+
+const rawState = JSON.parse(localStorage.getItem(KEY)) || {};
+
+const state = {
+  user: {
+    id: rawState.user?.id || null,
+    name: rawState.user?.name || "SkillSwap Learner",
+    bio: rawState.user?.bio || "",
+    joined: rawState.user?.joined || Date.now(),
+    location: rawState.user?.location || "",
+    headline: rawState.user?.headline || "",
+    website: rawState.user?.website || ""
+  },
+  roadmaps: Array.isArray(rawState.roadmaps) ? rawState.roadmaps : [],
+  events: Array.isArray(rawState.events) ? rawState.events : [],
+  certificates: Array.isArray(rawState.certificates) ? rawState.certificates : []
+};
+
+state.insights = rawState.insights || {
+  profileViews: 0,
+  postImpressions: 0,
+  followers: 0,
+  posts: 0,
+  likes: 0,
+  comments: 0
+};
+
+async function loadProfileFromBackend() {
+  if (!state.user?.id) {
+    console.error("User not found in state");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/users/${state.user.id}/`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to load profile");
+      return;
+    }
+
+    const data = await res.json();
+
+    state.user = {
+  id: state.user.id,
+  name: data.username || state.user.name || "SkillSwap Learner",
+
+  // backend does NOT provide these → keep local values
+  bio: state.user.bio || "",
+  joined: state.user.joined || Date.now(),
+  location: state.user.location || "",
+  headline: state.user.headline || "",
+  website: state.user.website || ""
+};
+    saveState();
+    renderProfile();
+
+  } catch (err) {
+    console.error("loadProfileFromBackend() failed:", err);
+  }
+}
+/* =========================================================
+   LOAD ROADMAPS FROM BACKEND
+========================================================= */
+async function loadRoadmapsFromBackend() {
+  if (!state.user?.id) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/roadmaps/?user_id=${state.user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to load roadmaps");
+      return;
+    }
+
+    const data = await res.json();
+
+    // Expecting [{ skill: "...", ... }]
+    state.roadmaps = Array.isArray(data) ? data : [];
+
+    saveState();
+    renderSkills();
+
+  } catch (err) {
+    console.error("loadRoadmapsFromBackend() failed:", err);
+  }
+}
+/* =========================================================
+   RENDER PROFILE
+========================================================= */
+function renderProfile() {
+  const name = state.user?.name || "SkillSwap Learner";
+
+  const nameInput = document.getElementById("nameInput");
+  const avatar = document.getElementById("avatar");
+  const memberSince = document.getElementById("memberSince");
+  const bio = document.getElementById("bio");
+  const headline = document.getElementById("headline");
+  const location = document.getElementById("location");
+  const website = document.getElementById("website");
+
+  if (nameInput) nameInput.value = name;
+  if (avatar) avatar.textContent = name[0]?.toUpperCase() || "S";
+
+  if (!state.user.joined) {
+    state.user.joined = Date.now();
+    saveState();
+  }
+
+  if (memberSince) {
+    memberSince.textContent =
+      "Member since " + new Date(state.user.joined).toLocaleDateString();
+  }
+
+  if (bio) bio.value = state.user.bio || "";
+  if (headline) headline.value = state.user.headline || "";
+  if (location) location.value = state.user.location || "";
+  if (website) website.value = state.user.website || "";
+
+  renderSkills();
+}
+
+/* =========================================================
+   SKILLS
+========================================================= */
+function renderSkills() {
+  const learning = state.roadmaps || [];
+  const teaching = (state.events || []).filter(
+    e => e.type === "exchange" && e.completed
+  );
+
+  const learningEl = document.getElementById("learningSkills");
+  if (learningEl) {
+    learningEl.innerHTML = learning.length
+      ? learning.map(r => `<span class="tag">${r.skill}</span>`).join("")
+      : `<span style="color:#777">No skills yet</span>`;
+  }
+
+  const teachingEl = document.getElementById("teachingSkills");
+  if (teachingEl) {
+    teachingEl.innerHTML = teaching.length
+      ? [...new Set(teaching.map(e => e.skill))]
+          .map(s => `<span class="tag">${s}</span>`)
+          .join("")
+      : `<span style="color:#777">No exchanges yet</span>`;
+  }
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+async function renderStats() {
+  if (!state.user?.id) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/profile/stats/?user_id=${state.user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to load stats");
+      return;
+    }
+
+    const data = await res.json();
+
+    document.getElementById("completedRoadmaps").textContent =
+      data.completed_roadmaps ?? 0;
+
+    document.getElementById("completedExchanges").textContent =
+      data.completed_exchanges ?? 0;
+
+    document.getElementById("certificatesCount").textContent =
+      data.certificates ?? 0;
+
+    document.getElementById("skillsCount").textContent =
+      data.skills ?? 0;
+
+    document.getElementById("activityStreak").textContent =
+      data.streak ?? 0;
+
+    if (data.average_rating) {
+  document.getElementById("ratingsCount").textContent =
+    `${data.average_rating} ⭐ (${data.ratings_count})`;
+}
+     document.getElementById("avgRating").textContent =
+  `⭐ ${data.average_rating || 0} / 5`;
+
+  } catch (err) {
+    console.error("renderStats() failed:", err);
+  }
+}
+renderSkills();   // force refresh after backend load
+/* =========================================================
+   SAVE STATE
+========================================================= */
+
+/* =========================================================
+   SAVE PROFILE
+========================================================= */
+async function saveProfile() {
+  const user = JSON.parse(localStorage.getItem("skillswap_state"))?.user;
+  if (!user || !user.id) {
+    showToast("User not found");
+    return;
+  }
+
+  state.user.bio = document.getElementById("bio").value;
+  state.user.headline = document.getElementById("headline").value;
+  state.user.location = document.getElementById("location").value;
+  state.user.website = document.getElementById("website").value;
+
+  saveState();
+
+  const payload = {
+    name: document.getElementById("nameInput")?.value.trim()
+  };
+
+  const res = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    showToast("Failed to update profile ❌");
+    return;
+  }
+
+  showToast("Profile updated successfully ✅");
+  await loadProfileFromBackend();
+  updateProfileCompletion();
+  renderPreview();
+}
+/* =========================================================
+   SAVE STATE
+========================================================= */
+function saveState() {
+  const latest = JSON.parse(localStorage.getItem(KEY)) || {};
+
+  const merged = {
+    ...latest,
+    user: state.user,
+    roadmaps: latest.roadmaps || [],
+    events: latest.events || [],
+    certificates: latest.certificates || [],
+    insights: latest.insights || {}
+  };
+
+  localStorage.setItem(KEY, JSON.stringify(merged));
+}
+
+/* =========================================================
+RENDERING CERTIFICATES
+========================================================= */
+async function renderCertificates() {
+  const user = JSON.parse(localStorage.getItem("skillswap_state"))?.user;
+  if (!user || !user.id) return;
+
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/profile/certificates/?user_id=${user.id}`,
+      { credentials: "include" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to load certificates");
+      return;
+    }
+
+    const certs = await res.json();
+    const list = document.getElementById("certificateList");
+
+    if (!certs.length) {
+      list.innerHTML = `<p style="color:#777">No certificates earned yet</p>`;
+      return;
+    }
+
+    list.innerHTML = certs.map(c => `
+      <div class="certificate-item">
+        <div>
+          <span>${c.title}</span><br>
+          <small style="color:#555">
+            ${(c.type || "self").toUpperCase()} • ${new Date(c.issued_on).toLocaleDateString()}
+          </small>
+        </div>
+        <button onclick="window.open('${c.file_url}', '_blank')">Download</button>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error("renderCertificates() error:", err);
+  }
+}
+
+/* =========================================================
+DOWNLOADING CERTIFICATES (LOCAL MOCK ONLY)
+========================================================= */
+function downloadCertificate(certId) {
+  const fresh = JSON.parse(localStorage.getItem("skillswap_state")) || {};
+  const cert = fresh.certificates?.find(c => c.id === certId);
+
+  if (!cert) {
+    showToast("Certificate not found");
+    return;
+  }
+
+  showToast("Preparing certificate download...");
+
+  setTimeout(() => {
+    showToast(`Downloaded: ${cert.fileName || "certificate.pdf"}`);
+  }, 1000);
+}
+
+/* =========================================================
+UPDATE PROFILE COMPLETION
+========================================================= */
+function updateProfileCompletion() {
+  if (!state || !state.user) return;
+
+  let score = 0;
+
+  // Profile info
+  if (state.user.bio?.trim()) score += 20;
+  if (state.user.headline?.trim()) score += 10;
+  if (state.user.location?.trim()) score += 10;
+  if (state.user.website?.trim()) score += 10;
+
+  // Learning activity
+  if ((state.roadmaps || []).length > 0) score += 20;
+  if ((state.events || []).some(e => e.completed)) score += 15;
+  if ((state.certificates || []).length > 0) score += 15;
+
+  const percent = Math.min(score, 100);
+
+  const bar = document.getElementById("profileProgress");
+  if (bar) bar.style.width = percent + "%";
+}
+
+/* =========================================================
+TOAST 
+========================================================= */
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+/* =========================================================
+preview 
+========================================================= */
+function renderPreview() {
+  if (!state || !state.user) return;
+
+  const name = document.getElementById("previewName");
+  const headline = document.getElementById("previewHeadline");
+  const location = document.getElementById("previewLocation");
+  const bio = document.getElementById("previewBio");
+
+  if (name) name.textContent = state.user.name || "";
+  if (headline) headline.textContent = state.user.headline || "";
+  if (location) location.textContent = state.user.location || "";
+  if (bio) bio.textContent = state.user.bio || "";
+}
+/* =========================================================
+RENDER INSIGHTS
+========================================================= */
+async function renderInsights() {
+  if (!state.user?.id) return;
+
+  try {
+    // 1️⃣ Fetch explore posts from backend
+    const res = await fetch("http://127.0.0.1:8000/api/posts/", {
+      credentials: "include"
+    });
+
+    if (!res.ok) {
+      console.error("Failed to load explore posts for insights");
+      return;
+    }
+
+    const posts = await res.json();
+    if (!Array.isArray(posts)) return;
+
+    // 2️⃣ Filter only current user's posts
+    const myPosts = posts.filter(p =>
+      (p.author || p.authorId) == state.user.id
+    );
+
+    // 3️⃣ Calculate social insights
+    const postsCount = myPosts.length;
+
+    const likesCount = myPosts.reduce(
+      (sum, p) => sum + (p.likes_count ?? p.likes ?? 0),
+      0
+    );
+
+    const commentsCount = myPosts.reduce(
+      (sum, p) => sum + (p.comments_count ?? p.comments ?? 0),
+      0
+    );
+
+    // 4️⃣ Render into Profile UI
+    document.getElementById("postsCount").textContent = postsCount;
+    document.getElementById("likesCount").textContent = likesCount;
+    document.getElementById("commentsCount").textContent = commentsCount;
+
+    // These are not implemented in backend yet → keep 0 or wire later
+    const profileRes = await fetch(
+  `http://127.0.0.1:8000/api/profile/stats/?user_id=${state.user.id}`
+);
+
+const profileData = await profileRes.json();
+
+document.getElementById("profileViews").textContent =
+  profileData.profile_views ?? 0;
+    document.getElementById("postImpressions").textContent = 0;
+    document.getElementById("followersCount").textContent = 0;
+
+  } catch (err) {
+    console.error("renderInsights() failed:", err);
+  }
+}
+/* =========================================================
+LOGOUT 
+========================================================= */
+function openLogoutModal() {
+  const modal = document.getElementById("logoutModal");
+  if (modal) modal.classList.add("active");
+}
+
+function closeLogoutModal() {
+  const modal = document.getElementById("logoutModal");
+  if (modal) modal.classList.remove("active");
+}
+
+function confirmLogout() {
+  closeLogoutModal();
+  showToast("Logging out...");
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 800);
+}
+
+/* =========================================================
+   REPORT / ABUSE FLOW
+========================================================= */
+function openReportModal() {
+  const modal = document.getElementById("reportModal");
+  if (modal) modal.classList.add("active");
+}
+
+function closeReportModal() {
+  const modal = document.getElementById("reportModal");
+  if (modal) modal.classList.remove("active");
+}
+async function submitReport() {
+  const type = document.getElementById("reportType").value;
+  const location = document.getElementById("reportLocation").value;
+  const reportedUser = document.getElementById("reportedUser").value.trim();
+  const description = document.getElementById("reportDescription").value.trim();
+  const me = state.user.id;  // current logged in user id
+
+  if (!type || !location || !reportedUser || !description) {
+    showToast("Please fill all required fields");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/report/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        reported_user: reportedUser,   // can be username OR id
+        reported_by: me,               // MUST be id
+        report_type: type,
+        report_location: location,
+        description: description
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(data);
+      showToast(data.error || "Failed to submit report ❌");
+      return;
+    }
+
+    showToast("Report submitted successfully ✅");
+    closeReportModal();
+
+  } catch (err) {
+    console.error(err);
+    showToast("Server error ❌");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProfileFromBackend();
+  await loadRoadmapsFromBackend();
+  await renderStats();
+  await renderCertificates();
+  await loadUserReviews();
+  renderInsights(); 
+  updateProfileCompletion();
+  renderPreview();
+});
+
+async function loadUserReviews() {
+
+  if (!state.user?.id) return;
+
+  try {
+
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/profile/reviews/?user_id=${state.user.id}`
+    );
+
+    if (!res.ok) return;
+
+    const reviews = await res.json();
+
+    const list = document.getElementById("reviewsList");
+
+    if (!reviews.length) {
+      list.innerHTML = "<p style='color:#777'>No reviews yet</p>";
+      return;
+    }
+
+    list.innerHTML = reviews.map(r => `
+      <div style="
+        padding:12px;
+        border-radius:12px;
+        background:#f6f4fb;
+        margin-bottom:10px;
+      ">
+        <strong>${"⭐".repeat(r.rating)}</strong>
+        <p style="margin:6px 0;font-size:14px">${r.feedback || "No comment"}</p>
+        <small style="color:#666">— ${r.reviewer}</small>
+      </div>
+    `).join("");
+
+  } catch(err) {
+    console.error("Failed loading reviews", err);
+  }
+}
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+  });
+</script>
+</body>
+</html>

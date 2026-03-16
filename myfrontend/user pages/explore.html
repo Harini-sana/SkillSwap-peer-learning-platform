@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Explore – SkillSwap</title>
+<style>
+/* =========================================================
+   ROOT VARIABLES (SAME AS DASHBOARD)
+========================================================= */
+:root {
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  --bg-main:#F6F4FB;
+  --white:#ffffff;
+  --text-dark:#1F1F2E;
+  --text-muted:#6B6785;
+
+  --success:#5CB8A6;
+}
+/* =========================================================
+   BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+}
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  height: 100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+  width: 80px;
+  background: var(--violet-900);
+  padding: 20px 12px;
+  transition: width 0.35s ease;
+}
+
+.sidebar:hover { width: 230px; }
+
+.brand {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.sidebar:hover .brand { opacity: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+
+.nav-item .label { opacity: 0; }
+.sidebar:hover .label { opacity: 1; }
+
+/* =========================================================
+   MAIN AREA
+========================================================= */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   EXPLORE HEADER
+========================================================= */
+.explore-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.explore-header h1 { margin: 0; }
+
+/* =========================================================
+   POST CREATOR
+========================================================= */
+.post-creator {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.post-creator textarea {
+  width: 100%;
+  border-radius: 14px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  resize: none;
+}
+
+.post-creator button {
+  margin-top: 10px;
+}
+
+/* =========================================================
+   FEED
+========================================================= */
+.feed {
+  max-width: 760px;
+  margin: auto;
+}
+
+.post {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.5s ease;
+}
+
+/* =========================================================
+   POST HEADER
+========================================================= */
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--violet-300);
+  cursor: pointer;
+}
+
+/* =========================================================
+   PROFILE HOVER PREVIEW
+========================================================= */
+.post-user:hover .profile-preview {
+  display: block;
+}
+/* =========================================================
+   POST IMAGE
+========================================================= */
+.post img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+
+/* =========================================================
+   POST ACTIONS
+========================================================= */
+.actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.actions span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.actions span:hover {
+  color: var(--violet-700);
+}
+
+/* =========================================================
+   BUTTONS (POLISHED)
+========================================================= */
+.btn {
+  background: linear-gradient(135deg, var(--violet-700), var(--violet-500));
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(77,58,107,0.3);
+}
+
+.btn.secondary {
+  background: var(--violet-100);
+  color: var(--violet-700);
+}
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+.image-preview {
+  margin-top: 12px;
+  position: relative;
+}
+
+.image-preview img {
+  width: 100%;
+  border-radius: 16px;
+}
+
+.image-preview span {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   POPUP MODAL
+========================================================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  width: 320px;
+}
+/* =========================================================
+   SIDEBAR LINKS — REMOVE UNDERLINES
+========================================================= */
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* =========================================================
+   POST HEADERS AND POST ANIMATIONS
+========================================================= */
+.post {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+/* HEADER */
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.post-user {
+  display: flex;
+  gap: 12px;
+  position: relative; /* 🔥 REQUIRED FOR PROFILE PREVIEW */
+}
+.profile-preview {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-meta span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.user-meta small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* TEXT */
+.post-text {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* IMAGE */
+.post img {
+  width: 100%;
+  margin-top: 14px;
+  border-radius: 12px;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+/* ACTIONS */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.actions span {
+  cursor: pointer;
+}
+
+.actions span:hover {
+  color: var(--violet-700);
+}
+
+/* FOLLOW */
+.follow-btn {
+  background: transparent;
+  border: 1px solid var(--violet-500);
+  color: var(--violet-700);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.follow-btn:hover {
+  background: var(--violet-100);
+}
+.profile-preview {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  background: white;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  display: none;
+  width: 220px;
+  z-index: 20;
+}
+
+.post-user:hover .profile-preview {
+  display: block;
+}
+
+
+.post.highlight {
+  outline: 3px solid var(--violet-500);
+  animation: pulse 1.5s ease;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(116,95,141,0.6); }
+  100% { box-shadow: 0 0 0 18px rgba(116,95,141,0); }
+}
+
+.follow-btn {
+  transition: all 0.2s ease;
+}
+
+.follow-btn:contains("Followed") {
+  background: var(--violet-100);
+}
+.skill-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.skill-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  background: var(--violet-100);
+  color: var(--violet-700);
+}
+
+.skill-chip.active {
+  background: var(--violet-700);
+  color: white;
+}
+
+</style>
+<script src="theme.js"></script>
+</head>
+
+<body>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">SkillSwap</div>
+
+  <a href="dashboard.html" class="nav-link">
+    <div class="nav-item">
+      🏠 <span class="label">Dashboard</span>
+    </div>
+  </a>
+
+  <a href="explore.html" class="nav-link">
+    <div class="nav-item active">
+      🌍 <span class="label">Explore</span>
+    </div>
+  </a>
+
+  <a href="connect.html" class="nav-link">
+    <div class="nav-item">
+      🤝 <span class="label">Connect</span>
+    </div>
+  </a>
+
+  <a href="messages.html" class="nav-link">
+    <div class="nav-item ">
+      💬 <span class="label">Messages</span>
+    </div>
+  </a>
+
+  <a href="progress.html" class="nav-link">
+    <div class="nav-item ">
+      📊 <span class="label">Progress</span>
+    </div>
+  </a>
+
+  <a href="profile.html" class="nav-link">
+    <div class="nav-item">
+      👤 <span class="label">Profile</span>
+    </div>
+  </a>
+</div>
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HEADER -->
+  <div class="explore-header">
+    <h1>Explore Skills</h1>
+
+    <div style="display:flex; gap:10px">
+      <button class="btn secondary" onclick="openSavedPosts()">
+        🔖 Saved Posts
+      </button>
+
+      <button class="btn" onclick="openPostModal()" title="Create Post">
+        ➕
+      </button>
+    </div>
+  </div>
+<!-- SKILL FILTERS -->
+<div class="skill-filters" id="skillFilters"></div>
+
+  <!-- FEED -->
+  <div class="feed" id="feed"></div>
+
+  <input type="file" id="imageInput" accept="image/*" hidden />
+
+</div>
+<!-- END MAIN -->
+
+
+<!-- COMMENT POPUP -->
+<div class="modal" id="commentModal">
+  <div class="modal-content">
+    <h3>Add Comment</h3>
+    <h3 style="margin-bottom:10px">Comments</h3>
+
+    <div id="commentList" style="
+      max-height:240px;
+      overflow-y:auto;
+      margin-bottom:12px;
+      padding-right:6px;
+    "></div>
+
+    <div style="
+      display:flex;
+      gap:8px;
+      align-items:flex-end;
+    ">
+      <textarea
+        id="commentText"
+        rows="2"
+        placeholder="Write a comment..."
+        style="flex:1"
+      ></textarea>
+
+      <button class="btn" onclick="submitComment()">Post</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- SAVED POSTS MODAL -->
+<div class="modal" id="savedModal">
+  <div class="modal-content" style="width:720px; max-height:80vh; overflow-y:auto;">
+    <h3>Saved Posts</h3>
+    <div id="savedFeed"></div>
+  </div>
+</div>
+
+
+<!-- SHARE MODAL -->
+<div class="modal" id="shareModal">
+  <div class="modal-content" style="width:360px;">
+    <h3>Share with</h3>
+
+    <div id="userList" style="
+      max-height:260px;
+      overflow-y:auto;
+      scrollbar-width:none;
+    "></div>
+  </div>
+</div>
+
+
+<!-- CREATE POST MODAL -->
+<div class="modal" id="postModal">
+  <div class="modal-content" style="width:420px">
+
+    <h3>Create Post</h3>
+
+    <textarea
+      id="modalPostText"
+      rows="4"
+      placeholder="Share your progress or learning…"
+      style="width:100%; margin-bottom:12px"
+      required
+    ></textarea>
+    <select id="postSkill" style="width:100%;margin-bottom:12px;padding:8px;border-radius:8px">
+  <option value="Self Learning">Self Learning</option>
+  <option value="UI/UX">UI/UX</option>
+  <option value="Python">Python</option>
+  <option value="Data Science">Data Science</option>
+  <option value="Graphic Design">Graphic Design</option>
+  <option value="Skill Exchange">Skill Exchange</option>
+</select>
+    <div class="image-preview" id="modalImagePreview" style="display:none">
+      <img id="modalPreviewImg" style="max-height:220px;object-fit:cover"/>
+      <span onclick="removeModalImage()">✕</span>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:10px">
+      <button class="btn secondary"
+        onclick="document.getElementById('modalImageInput').click()">
+        Add Image (optional)
+      </button>
+
+      <button class="btn" onclick="event.stopPropagation(); submitPostFromModal()">
+        Post
+      </button>
+    </div>
+
+    <input
+      type="file"
+      id="modalImageInput"
+      accept="image/*"
+      hidden
+    />
+  </div>
+</div>
+
+<script>
+const BASE_URL = "http://127.0.0.1:8000";
+const STORAGE_KEY = "skillswap_state";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("post_id");
+
+  if (postId) {
+    openPostById(postId);  // 🔥 your function that scrolls/highlights post
+  }
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const exchangeId = params.get("exchange_id");
+
+  if (exchangeId) {
+    loadExchangeFromBackend(exchangeId);
+  }
+});
+async function loadExchangeFromBackend(id) {
+  const res = await fetch(`http://127.0.0.1:8000/api/exchange/${id}/`, {
+    credentials: "include"
+  });
+
+  if (!res.ok) return;
+
+  const data = await res.json();
+  localStorage.setItem("activeExchange", JSON.stringify(data));
+  hydrateExchangeRoom();
+}
+/* =========================================================
+   USER & STATE
+========================================================= */
+const GLOBAL_STATE = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+if (!GLOBAL_STATE.user || !GLOBAL_STATE.user.id) {
+  window.location.href = "login.html";
+}
+
+const CURRENT_USER = {
+  id: GLOBAL_STATE.user?.id || null,
+  name: GLOBAL_STATE.user?.name || "SkillSwap Learner",
+  headline: GLOBAL_STATE.user?.headline || "Learning Enthusiast"
+};
+
+let state = GLOBAL_STATE;
+let followedSkills = JSON.parse(localStorage.getItem("followedSkills") || "[]");
+let postDates = JSON.parse(localStorage.getItem("postDates") || "[]");
+
+/* =========================================================
+   MOCK USERS FOR SHARE (TEMP)
+========================================================= */
+let users = [];
+
+async function loadUsersForShare() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/chat/conversations/`, {
+      credentials: "include"
+    });
+    if (!res.ok) throw new Error(res.status);
+
+    users = await res.json();
+  } catch (e) {
+    console.error("Failed to load users for share", e);
+    users = [];
+  }
+}
+/* =========================================================
+   FEED DATA
+========================================================= */
+let posts = [];
+let activeSkillFilter = "All";
+let activeSharePost = null;
+let activeShareExchange = null;
+//to make fe
+//post feature sharing
+function focusSharedPostIfAny() {
+  const openPostId = localStorage.getItem("openPostId");
+  if (!openPostId) return;
+
+  const el = document.getElementById(`post-${openPostId}`);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("highlight");
+
+    setTimeout(() => el.classList.remove("highlight"), 2500);
+    localStorage.removeItem("openPostId");
+  }
+}
+
+/* =========================================================
+   LOAD FEED
+========================================================= */
+async function loadExploreFeed() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/`, { credentials: "include" });
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("Backend empty. Using mock posts.");
+      posts = [];
+    } else {
+      posts = data;
+      posts = data.map(p => ({
+  id: p.id,
+  authorId: p.author,
+  authorName: p.author_name,        // 🔥 no fallback
+  authorHeadline: p.author_headline,
+  text: p.text,
+  skill: p.skill,
+  createdAt: p.created_at
+  ? (isNaN(new Date(p.created_at).getTime())
+      ? Date.now()
+      : new Date(p.created_at).getTime())
+  : Date.now(),
+  likes: p.likes_count || 0,
+  comments: p.comments_count || 0,
+  likedByMe: p.liked_by_me || false,
+  savedByMe: p.saved_by_me || false,
+  image: p.image
+  ? (p.image.startsWith("http") ? p.image : `${BASE_URL}${p.image}`)
+  : null
+}));
+
+    }
+
+    renderSkillFilters();
+    renderFeed();
+  } catch (err) {
+    console.error("Backend failed. Using mock posts:", err);
+    posts = [];
+    renderSkillFilters();
+    renderFeed();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadExploreFeed();
+  await loadUsersForShare();   // 🔥 load real users for sharing
+  setTimeout(focusSharedPostIfAny, 400);
+});
+/* =========================================================
+   RENDER FEED
+========================================================= */
+function renderFeed() {
+  const feed = document.getElementById("feed");
+  if (!feed) return;
+
+  feed.innerHTML = "";
+
+  const visiblePosts = posts.filter(
+    p => activeSkillFilter === "All" || p.skill === activeSkillFilter
+  );
+
+  if (!visiblePosts.length) {
+    feed.innerHTML = `<div style="background:white;padding:30px;border-radius:18px;text-align:center;color:#6B6785">
+      <h3>No posts to show</h3>
+      <p>Follow skills or create your first post 🚀</p>
+    </div>`;
+    return;
+  }
+
+  visiblePosts.forEach(p => {
+    feed.innerHTML += `
+      <div class="post" id="post-${p.id}">
+        <div class="post-header">
+          <div class="post-user">
+            <div class="avatar" onclick="viewProfile('${p.authorId}')"></div>
+            <div class="user-meta">
+              <strong>${p.authorName}</strong>
+              <span>${p.authorHeadline || ""}</span>
+              <small>${timeAgo(p.createdAt)}</small>
+            </div>
+          </div>
+
+          ${
+            p.authorId === CURRENT_USER.id
+              ? `<button class="follow-btn" onclick="deletePost('${p.id}')">🗑 Delete</button>`
+              : `<button class="follow-btn" onclick="toggleFollow('${p.skill}', this)">
+                   ${followedSkills.includes(p.skill) ? "✓ Followed" : "+ Follow"}
+                 </button>`
+          }
+        </div>
+
+        <div class="post-text">${p.text}</div>
+        ${p.image 
+  ? `<img src="${p.image}" onerror="this.style.display='none'" />` 
+  : ""
+}
+
+        <div class="actions">
+          <span onclick="likePost('${p.id}')">${p.likedByMe ? "❤️" : "🤍"} ${p.likes}</span>
+          <span onclick="commentPost('${p.id}')">💬 ${p.comments}</span>
+          <span onclick="savePost('${p.id}')">🔖 ${p.savedByMe ? "Saved" : "Save"}</span>
+          <span onclick="sharePost('${p.id}')">🔗 Share</span>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* =========================================================
+   SKILL FILTERS
+========================================================= */
+function renderSkillFilters() {
+  const container = document.getElementById("skillFilters");
+  if (!container) return;
+
+  const skills = ["All", ...new Set(posts.map(p => p.skill))];
+  container.innerHTML = "";
+
+  skills.forEach(skill => {
+    const chip = document.createElement("div");
+    chip.className = `skill-chip ${skill === activeSkillFilter ? "active" : ""}`;
+    chip.textContent = skill;
+    chip.onclick = () => {
+      activeSkillFilter = skill;
+      renderSkillFilters();
+      renderFeed();
+      setTimeout(focusSharedPostIfAny, 200);
+
+    };
+    container.appendChild(chip);
+  });
+}
+
+/* =========================================================
+   LIKE / SAVE / COMMENT
+========================================================= */
+async function likePost(id) {
+  const post = posts.find(p => p.id == id);
+
+  // instant UI feedback
+  post.likedByMe = !post.likedByMe;
+  post.likes += post.likedByMe ? 1 : -1;
+  renderFeed();
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/${id}/like/`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    user_id: GLOBAL_STATE.user.id   // ✅ REQUIRED
+  })
+});
+
+
+    if (!res.ok) throw new Error("Like failed");
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function savePost(id) {
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/${id}/save/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: GLOBAL_STATE.user.id   // 🔥 REQUIRED
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) return alert(data.error || "Save failed");
+
+    const post = posts.find(p => p.id == id);
+    post.savedByMe = data.saved;
+    renderFeed();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+let activeCommentPostId = null;
+
+function commentPost(id) {
+  activeCommentPostId = id;
+  document.getElementById("commentModal").style.display = "flex";
+  loadComments(id);   // 🔥 load existing comments
+}
+
+async function loadComments(postId) {
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/${postId}/comments/`);
+    const data = await res.json();
+
+    const list = document.getElementById("commentList");
+    list.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      list.innerHTML = "<p style='color:#777'>No comments yet.</p>";
+      return;
+    }
+
+    data.forEach(c => {
+  const canDelete = c.user_id === GLOBAL_STATE.user.id;
+
+  list.innerHTML += `
+    <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong>${c.username}:</strong>
+        <div>${c.text}</div>
+      </div>
+      ${canDelete ? `<button onclick="deleteComment(${c.id})">🗑</button>` : ""}
+    </div>
+  `;
+});
+
+  } catch (e) {
+    console.error("Load comments failed", e);
+  }
+}
+async function deleteComment(commentId) {
+  await fetch(`${BASE_URL}/api/comments/${commentId}/delete/`, { method: "POST" });
+  loadComments(activeCommentPostId);
+  loadExploreFeed(); // refresh count
+}
+
+async function submitComment() {
+  const text = document.getElementById("commentText").value.trim();
+  if (!text) return;
+
+  if (!GLOBAL_STATE.user || !GLOBAL_STATE.user.id) {
+    alert("Please login again.");
+    return;
+  }
+
+  const res = await fetch(`${BASE_URL}/api/posts/${activeCommentPostId}/comment/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text,
+      user_id: GLOBAL_STATE.user.id   // ✅ REQUIRED BY BACKEND
+    })
+  });
+
+  const raw = await res.text();
+  console.log("Comment raw response:", res.status, raw);
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    alert("Backend returned HTML instead of JSON. Check Django logs.");
+    return;
+  }
+
+  if (!res.ok) {
+    alert(data.error || "Comment failed");
+    return;
+  }
+document.getElementById("commentText").value = "";
+await loadComments(activeCommentPostId);  // 🔥 reload comments live
+
+await loadComments(activeCommentPostId);
+await loadExploreFeed();   // 🔥 ensures comment count syncs
+
+
+}
+
+/* =========================================================
+   SHARE
+========================================================= */
+function sharePost(postId) {
+  activeSharePost = posts.find(p => p.id == postId);
+
+  if (!activeSharePost) {
+    alert("Post not found");
+    return;
+  }
+
+  const list = document.getElementById("userList");
+  list.innerHTML = "";
+
+  users.forEach(u => {
+    list.innerHTML += `
+      <div 
+        style="
+          padding:10px 12px;
+          margin-bottom:8px;
+          border-radius:12px;
+          border:1px solid #eee;
+          cursor:pointer;
+          transition:0.2s;
+          display:flex;
+          align-items:center;
+          gap:8px;
+        "
+        onmouseover="this.style.background='#f3f1fb'"
+        onmouseout="this.style.background='white'"
+        onclick="sendPost(${u.id})"
+      >
+        👤 <strong>${u.name}</strong>
+      </div>
+    `;
+  });
+
+  document.getElementById("shareModal").style.display = "flex";
+}
+
+async function sendPost(userId) {
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/${activeSharePost.id}/share/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: GLOBAL_STATE.user.id,   // 🔥 REQUIRED
+        to_user_id: userId
+      })
+    });
+
+    if (!res.ok) return alert("Share failed");
+
+    localStorage.setItem("openPostId", activeSharePost.id);
+localStorage.setItem("openChatUser", userId);   // 🔥 auto open that chat
+window.location.href = "messages.html";
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/* =========================================================
+   CREATE / DELETE POST
+========================================================= */
+async function submitPostFromModal() {
+  const text = document.getElementById("modalPostText").value.trim();
+  const fileInput = document.getElementById("modalImageInput");
+
+  if (!text) {
+    alert("Post text is required");
+    return;
+  }
+  if (!GLOBAL_STATE.user || !GLOBAL_STATE.user.id) {
+    alert("No user in localStorage. Please login first.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("text", text);
+  const skill = document.getElementById("postSkill").value;
+  formData.append("skill", skill);
+  formData.append("user_id", GLOBAL_STATE.user.id);
+
+  console.log("Posting as user:", GLOBAL_STATE.user.id);
+
+  if (fileInput.files[0]) {
+  console.log("Selected file:", fileInput.files[0]);   // 🔥 ADD THIS
+  formData.append("image", fileInput.files[0]);
+}
+
+  // 🔎 DEBUG
+  for (let pair of formData.entries()) {
+    console.log(pair[0], pair[1]);
+  }
+
+  const res = await fetch(`${BASE_URL}/api/posts/create/`, {
+    method: "POST",
+    body: formData
+  });
+
+  const textResp = await res.text();
+  console.log("Create post response:", res.status, textResp);
+
+  let data = {};
+  try {
+    data = JSON.parse(textResp);
+  } catch (e) {
+    alert("Backend did not return JSON");
+    return;
+  }
+
+  if (!res.ok) {
+    alert(data.error || "Create post failed");
+    return;
+  }
+
+  posts.unshift({
+  ...data,
+  image: data.image ? `${BASE_URL}${data.image}` : null,
+  comments: data.comments_count || data.comments || 0,
+  likes: data.likes_count || data.likes || 0,
+});
+
+  renderFeed();
+  document.getElementById("postModal").style.display = "none";
+}
+
+async function deletePost(postId) {
+  if (!confirm("Delete this post?")) return;
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/${postId}/delete/`, {
+      method: "POST",
+      credentials: "include"
+    });
+
+    if (!res.ok) return alert("Delete failed");
+
+    posts = posts.filter(p => p.id != postId);
+    renderFeed();
+  } catch (e) {
+    console.error(e);
+  }
+}
+async function openSavedPosts() {
+  const modal = document.getElementById("savedModal");
+  const container = document.getElementById("savedFeed");
+
+  modal.style.display = "flex";   // force open modal
+  container.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts/saved/`, {
+      credentials: "include"
+    });
+
+    const textResp = await res.text();
+    console.log("Saved posts response:", res.status, textResp);
+
+    let saved = [];
+    try {
+      saved = JSON.parse(textResp);
+    } catch (e) {
+      container.innerHTML = "Backend error: invalid JSON";
+      return;
+    }
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(saved) || saved.length === 0) {
+      container.innerHTML = "<p>No saved posts yet.</p>";
+      return;
+    }
+
+    saved.forEach(p => {
+      container.innerHTML += `
+        <div class="post">
+          <div class="post-header">
+            <strong>${p.authorName}</strong>
+            <button class="follow-btn" onclick="removeSaved('${p.id}')">Remove</button>
+          </div>
+          <div class="post-text">${p.text}</div>
+          ${p.image ? `<img src="${p.image}">` : ""}
+        </div>
+      `;
+    });
+
+  } catch (e) {
+    console.error("Saved posts fetch failed:", e);
+    container.innerHTML = "Failed to load saved posts";
+  }
+}
+
+async function removeSaved(postId) {
+  try {
+    await fetch(`${BASE_URL}/api/posts/${postId}/save/`, {
+      method: "POST",
+      credentials: "include"
+    });
+    openSavedPosts();
+  } catch (e) {
+    console.error(e);
+  }
+}
+/* =========================================================
+   HELPERS
+========================================================= */
+function toggleFollow(skill, btn) {
+  if (followedSkills.includes(skill)) {
+    followedSkills = followedSkills.filter(s => s !== skill);
+    btn.textContent = "+ Follow";
+  } else {
+    followedSkills.push(skill);
+    btn.textContent = "✓ Followed";
+  }
+  localStorage.setItem("followedSkills", JSON.stringify(followedSkills));
+}
+
+function viewProfile(userId) {
+  localStorage.setItem("viewProfile", userId);
+  window.location.href = "profile.html";
+}
+
+function timeAgo(time) {
+  const diff = Math.floor((Date.now() - time) / 60000);
+  if (diff < 1) return "Just now";
+  if (diff < 60) return `${diff}m ago`;
+  if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
+  return `${Math.floor(diff / 1440)}d ago`;
+}
+function openPostModal() {
+  document.getElementById("postModal").style.display = "flex";
+}
+document.querySelectorAll(".modal").forEach(m => {
+  m.onclick = e => {
+    if (e.target === m) m.style.display = "none";
+  };
+});
+document.getElementById("modalImageInput").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const preview = document.getElementById("modalPreviewImg");
+  const box = document.getElementById("modalImagePreview");
+
+  preview.src = URL.createObjectURL(file);
+  box.style.display = "block";
+});
+
+function removeModalImage() {
+  document.getElementById("modalImageInput").value = "";
+  document.getElementById("modalPreviewImg").src = "";
+  document.getElementById("modalImagePreview").style.display = "none";
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const postId = localStorage.getItem("openPostId");
+  if (!postId) return;
+
+  // Wait for feed to render
+  setTimeout(() => {
+    const postEl = document.getElementById(`post-${postId}`);
+
+    if (!postEl) {
+      console.warn("Shared post not found in DOM:", postId);
+      return;
+    }
+
+    // Scroll to post
+    postEl.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Highlight effect
+    postEl.classList.add("highlight");
+
+    setTimeout(() => {
+      postEl.classList.remove("highlight");
+    }, 2500);
+
+    localStorage.removeItem("openPostId");
+  }, 600);   // slight delay to ensure render completes
+});
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+  });
+</script>
+
+</body>
+</html>

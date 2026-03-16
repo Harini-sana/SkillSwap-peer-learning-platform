@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillSwap — Contact Us</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+   :root {
+  /* Dashboard Violet Scale */
+  --violet-900: #1C0C38;
+  --violet-700: #4D3A6B;
+  --violet-500: #745F8D;
+  --violet-300: #A08AB7;
+  --violet-100: #CDC2E5;
+
+  /* Base */
+  --bg: #F6F4FB;
+  --card: #ffffff;
+  --text: #1F1F2E;
+  --muted: #6B6785;
+
+  /* Accent mapping */
+  --accent: var(--violet-700);
+  --accent2: var(--violet-500);
+
+  /* UI */
+  --radius: 16px;
+  --shadow: 0 12px 30px rgba(28,12,56,0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #141021;
+  --card: #1E1A2E;
+  --text: #F4F2FA;
+  --muted: #B6AEDC;
+  --shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background .3s, color .3s;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  z-index: 50;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--violet-700);
+  letter-spacing: 0.3px;
+}
+
+nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: var(--accent);
+}
+
+.btn {
+  background: var(--violet-700);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  transition: 0.3s;
+} .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(28,12,56,0.25);
+}
+
+.btn-login {
+  background: var(--violet-500);
+}
+
+.btn-signup {
+  background: var(--violet-700);
+}
+.toggle-theme {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+/* Hero */
+.hero {
+  height: 60vh;
+  background: url('https://images.unsplash.com/photo-1497493292307-31c376b6e479?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  position: relative;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(28,12,56,0.85),
+    rgba(116,95,141,0.85)
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: #E9E4F5;
+}
+
+/* Contact section */
+.contact-container {
+  max-width: 1100px;
+  margin: 80px auto;
+  padding: 20px;
+  display: grid;
+  gap: 30px;
+}
+
+@media (min-width: 900px) {
+  .contact-container {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+.contact-form {
+  background: var(--card);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.contact-form h2 {
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--violet-300);
+  border-radius: 12px;
+  margin-bottom: 12px;
+
+  background: var(--bg);      /* theme friendly */
+  color: var(--text);         /* readable text */
+
+  font-size: 1rem;
+}
+
+/* placeholder */
+.contact-form input::placeholder,
+.contact-form textarea::placeholder{
+  color: var(--muted);
+}
+
+.contact-form textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+.contact-form button {
+  width: 100%;
+  background: var(--violet-700);
+  color: #fff;
+  padding: 12px;
+  border: 0;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.contact-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(28,12,56,0.25);
+}
+
+.contact-info {
+  background: var(--card);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.contact-info h3 {
+  margin-bottom: 14px;
+  color: var(--accent);
+}
+
+.contact-info p {
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+
+.contact-info a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+iframe {
+  width: 100%;
+  height: 200px;
+  border: 0;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+/* FAQ */
+.faq {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.faq h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+details {
+  background: var(--card);
+  margin-bottom: 10px;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--accent);
+}
+
+details p {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+/* Footer */
+footer {
+  background: var(--card);
+  padding: 40px 20px;
+  margin-top: 60px;
+  color: var(--muted);
+}
+
+.footer-cols {
+  display: grid;
+  gap: 30px;
+  text-align: left;
+  max-width: 1000px;
+  margin: auto;
+}
+
+@media (min-width: 720px) {
+  .footer-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+footer h4 {
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+footer a {
+  color: var(--muted);
+  text-decoration: none;
+  display: block;
+  margin: 4px 0;
+}
+
+footer a:hover {
+  color: var(--accent);
+}
+
+/* MODALS */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--card);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 90%;
+  max-width: 380px;
+  text-align: center;
+}
+
+
+.close-btn{
+  float:right;
+  font-size:1.2rem;
+  cursor:pointer;
+  color:var(--muted);
+}
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--violet-300);
+  border-radius: 10px;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+.modal-content input::placeholder{
+  color: var(--muted);
+}
+
+/* Popup */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-box {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 14px;
+  width: 300px;
+  text-align: center;
+}
+
+.popup-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: var(--violet-700);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+/* extra for glow ad perfect */
+[data-theme="dark"] .contact-form input,
+[data-theme="dark"] .contact-form textarea,
+[data-theme="dark"] .modal-content input{
+  background:#1a1628;
+}
+input:focus,
+textarea:focus{
+  outline:none;
+  border-color:var(--violet-500);
+  box-shadow:0 0 0 2px rgba(160,138,183,0.25);
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="logo">SkillSwap</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+
+    <button class="toggle-theme" id="themeBtn" title="Toggle Dark/Light">🌙</button>
+    <button class="btn btn-login" id="loginBtn">Login</button>
+    <button class="btn btn-signup" id="signupBtn">Sign Up</button>
+
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>We’d Love to Hear From You!</h1>
+    <p>Have a question, suggestion, or partnership idea? Reach out to the SkillSwap team anytime.</p>
+  </div>
+</section>
+
+<section class="contact-container">
+<div class="contact-form">
+    <h2>Send Us a Message</h2>
+
+   <form id="contactForm">
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="email" id="email" placeholder="Your Email">
+    <input type="text" id="subject" placeholder="Subject">
+    <textarea id="message" placeholder="Your Message"></textarea>
+
+    <button type="submit">Send Message</button>
+</form>
+</div>
+
+ <div class="contact-info">
+    <h3>📍 Our Office</h3>
+    <p>SkillSwap HQ, Innovation Tower<br>San Francisco, CA 94103</p>
+
+    <h3>📧 Email Us</h3>
+    <p><a href="mailto:support@skillswap.com">support@skillswap.com</a></p>
+
+    <h3>📞 Call Us</h3>
+    <p>+1 (555) 234-5678</p>
+
+    <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0197747090523!2d-122.41941558468146!3d37.774929279759816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c2f0b1a2b%3A0x84dbe7e3b1ed5c2e!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+</div>
+</section>
+
+<section class="faq">
+  <h2>Frequently Asked Questions</h2>
+  <details>
+    <summary>How do I start a skill exchange?</summary>
+    <p>Simply sign up, add the skills you can teach and want to learn, then browse or use the AI suggestions to match!</p>
+  </details>
+  <details>
+    <summary>Is SkillSwap free to use?</summary>
+    <p>Yes, the core platform is free! You can upgrade to Premium for verified badges or featured listings.</p>
+  </details>
+  <details>
+    <summary>Can I teach multiple skills?</summary>
+    <p>Absolutely! You can list as many teaching or learning skills as you like.</p>
+  </details>
+</section>
+
+<footer>
+  <div class="footer-cols">
+    <div>
+      <h4>About SkillSwap</h4>
+      <p>SkillSwap connects people who want to learn with those who love to teach — no money, just knowledge.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="privacy policy.html">privacy policy</a>
+      <a href="terms and conditions.html">Terms and conditions</a>
+    </div>
+    <div>
+      <h4>Follow Us</h4>
+      <a href="#">LinkedIn</a>
+      <a href="#">Instagram</a>
+      <a href="#">Twitter</a>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:20px;">© 2025 SkillSwap • All rights reserved</p>
+</footer>
+ 
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+    <h3>Login</h3>
+
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+
+    <button type="button" class="btn" id="loginBtnSubmit">Login</button>
+      <!-- fixed: added id="forgotLink" -->
+    <p style="margin-top:10px;color:var(--muted);">Forgot password? <a href="#" id="forgotLink" style="color:var(--accent)">Reset</a></p>
+  </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal" id="signupModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('signupModal')">&times;</span>
+    <h3>Sign Up</h3>
+
+    <input type="text" id="signupName" placeholder="Full Name" required>
+    <input type="email" id="signupEmail" placeholder="Email" required>
+    <input type="password" id="signupPassword" placeholder="Password" required>
+
+    <button type="button" class="btn" id="signupBtnSubmit">Create Account</button>
+  </div>
+</div>
+
+
+<div class="modal" id="forgotModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('forgotModal')">&times;</span>
+    <h3>Reset Password</h3>
+
+    <input type="email" placeholder="Enter your email" id="resetEmail">
+
+    <button class="btn btn-login" onclick="resetPassword()">Send Reset Link</button>
+  </div>
+</div>
+
+<!--pop up-->
+<div id="popup" class="popup-overlay">
+    <div class="popup-box">
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()" class="popup-btn">OK</button>
+    </div>
+</div>
+
+<script>
+  // Theme toggle
+  const body=document.body;
+  const themeBtn=document.getElementById('themeBtn');
+  const savedTheme=localStorage.getItem('theme')||'light';
+  setTheme(savedTheme);
+  themeBtn.onclick=()=>setTheme(body.dataset.theme==='light'?'dark':'light');
+  function setTheme(t){body.dataset.theme=t;localStorage.setItem('theme',t);themeBtn.textContent=t==='light'?'🌙':'☀️';}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("contactForm");
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault(); // 🔥 STOPS PAGE REFRESH
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const subject = document.getElementById("subject").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!name || !email || !subject || !message) {
+            showPopup("⚠️ Please fill in all required fields.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/contact/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, subject, message })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showPopup("🎉 Thank you! Your message has been sent.");
+
+                form.reset();  // 🔥 Cleans the form
+            } else {
+                showPopup("⚠️ " + data.message);
+            }
+
+        } catch (error) {
+            console.error(error);
+            showPopup("❌ Something went wrong. Try again later.");
+        }
+    });
+});
+
+// ✅ POPUP FUNCTIONS
+function showPopup(message) {
+    document.getElementById("popupMessage").innerText = message;
+    document.getElementById("popup").style.display = "flex";
+
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        closePopup();
+    }, 5000);
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
+
+  /* ============================
+     MODAL CONTROLS
+  ============================ */
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'none';
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target.classList.contains("modal")) {
+      e.target.style.display = "none";
+    }
+  });
+
+  // Modal buttons
+  const loginBtnNav = document.getElementById('loginBtn');
+  const signupBtnNav = document.getElementById('signupBtn');
+  const joinNowBtn = document.getElementById('joinNowBtn');
+
+  if (loginBtnNav) loginBtnNav.onclick = () => openModal('loginModal');
+  if (signupBtnNav) signupBtnNav.onclick = () => openModal('signupModal');
+  if (joinNowBtn) joinNowBtn.onclick = () => openModal('signupModal');
+
+  /* ============================
+     CONFIG
+  ============================ */
+  const BASE_URL = "http://127.0.0.1:8000";
+
+  console.log("AUTH SCRIPT ACTIVE");
+
+  const loginBtnSubmit  = document.getElementById("loginBtnSubmit");
+  const signupBtnSubmit = document.getElementById("signupBtnSubmit");
+  const forgotLink = document.getElementById('forgotLink');
+
+  if (forgotLink) {
+    forgotLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("Forgot password clicked");
+      closeModal('loginModal');
+      openModal('forgotModal');
+    });
+  }
+
+  if (loginBtnSubmit) {
+    loginBtnSubmit.addEventListener("click", (e) => {
+      e.preventDefault();
+      handleLogin();
+    });
+  }
+
+  if (signupBtnSubmit) {
+    signupBtnSubmit.addEventListener("click", (e) => {
+      e.preventDefault();
+      handleSignup();
+    });
+  }
+
+  /* ============================
+     POPUP + REDIRECT
+  ============================ */
+  window.showPopupAndRedirect = function(message, url, delay = 1200) {
+    const popup = document.createElement("div");
+    popup.textContent = message;
+
+    popup.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2e7d32;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+    `;
+
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+      popup.remove();
+      window.location.href = url;
+    }, delay);
+  };
+
+  /* ============================
+     LOGIN
+  ============================ */
+  window.handleLogin = async function() {
+    console.log("Login clicked");
+
+    const emailInput = document.getElementById("loginEmail");
+    const passInput  = document.getElementById("loginPassword");
+
+    if (!emailInput || !passInput) {
+      alert("Login inputs not found");
+      return;
+    }
+
+    const email = emailInput.value.trim();
+    const password = passInput.value.trim();
+
+    if (!email || !password) {
+      alert("Email and password are required");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      console.log("Login response:", data);
+
+      if (res.ok && data.success) {
+        localStorage.setItem(
+          "skillswap_current_user",
+          JSON.stringify({
+            id: data.user.id,
+            name: data.user.username,
+            email: data.user.email
+          })
+        );
+
+        showPopupAndRedirect(
+          "Login successful! Redirecting to dashboard…",
+          "dashboard.html",
+          800
+        );
+      } else {
+        alert(data.error || "Invalid credentials");
+      }
+
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
+      alert("Backend not reachable");
+    }
+  };
+
+  /* ============================
+     SIGNUP
+  ============================ */
+  window.handleSignup = async function() {
+    console.log("Signup clicked");
+
+    const nameInput  = document.getElementById("signupName");
+    const emailInput = document.getElementById("signupEmail");
+    const passInput  = document.getElementById("signupPassword");
+
+    if (!nameInput || !emailInput || !passInput) {
+      alert("Signup inputs not found");
+      return;
+    }
+
+    const username = nameInput.value.trim();
+    const email    = emailInput.value.trim();
+    const password = passInput.value.trim();
+
+    if (!username || !email || !password) {
+      alert("All fields are required");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/signup/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const data = await res.json();
+      console.log("Signup response:", data);
+
+      if (res.ok && data.success) {
+        localStorage.setItem(
+          "skillswap_current_user",
+          JSON.stringify({
+            id: data.user.id,
+            name: data.user.username,
+            email: data.user.email
+          })
+        );
+
+        showPopupAndRedirect(
+          "Signup successful! Redirecting to dashboard…",
+          "dashboard.html",
+          1200
+        );
+      } else {
+        alert(data.error || "Signup failed");
+      }
+
+    } catch (err) {
+      console.error("SIGNUP ERROR:", err);
+      alert("Backend not reachable");
+    }
+  };
+
+  /* ============================
+     RESET PASSWORD
+  ============================ */
+  window.resetPassword = async function() {
+    const email = document.getElementById("resetEmail")?.value.trim();
+
+    if (!email) {
+      alert("Please enter your email.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/reset-password/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      console.log("Reset password response:", data);
+
+      if (data.message) {
+        alert(data.message);
+        closeModal("forgotModal");
+      } else {
+        alert(data.error || "Reset failed");
+      }
+
+    } catch (err) {
+      console.error("RESET ERROR:", err);
+      alert("Backend not reachable");
+    }
+  };
+</script>
+</body>
+</html>

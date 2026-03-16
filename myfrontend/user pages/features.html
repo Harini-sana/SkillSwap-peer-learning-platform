@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSwap — Features</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+   :root {
+  /* Dashboard Violet Scale */
+  --violet-900:#1C0C38;
+  --violet-700:#4D3A6B;
+  --violet-500:#745F8D;
+  --violet-300:#A08AB7;
+  --violet-100:#CDC2E5;
+
+  /* Base */
+  --bg:#F6F4FB;
+  --text:#1F1F2E;
+  --muted:#6B6785;
+  --card:#ffffff;
+
+  /* Accent mapping */
+  --accent:var(--violet-700);
+  --accent2:var(--violet-500);
+
+  /* UI */
+  --radius:16px;
+  --shadow:0 12px 30px rgba(28,12,56,0.08);
+}
+
+[data-theme="dark"] {
+  --bg:#141021;
+  --text:#F4F2FA;
+  --muted:#B6AEDC;
+  --card:#1E1A2E;
+  --shadow:0 20px 40px rgba(0,0,0,0.6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;}
+
+/* Header */
+header{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 24px;position:fixed;top:0;width:100%;background:var(--card);
+  box-shadow:var(--shadow);z-index:50;}
+.logo{font-weight:700;font-size:1.3rem;color:var(--accent)}
+nav{display:flex;gap:16px;align-items:center;}
+nav a{color:var(--text);text-decoration:none;font-weight:500}
+nav a:hover{color:var(--accent)}
+.btn {
+  background: var(--violet-700);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  transition: 0.3s;
+} .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(28,12,56,0.25);
+}
+
+.btn-login {
+  background: var(--violet-500);
+}
+
+.btn-signup {
+  background: var(--violet-700);
+}
+.toggle-theme{background:none;border:0;cursor:pointer;color:var(--text);font-size:1rem}
+
+/* Hero */
+.hero{
+  height:70vh;
+  background:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;position:relative;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    135deg,
+    rgba(28,12,56,0.85),
+    rgba(116,95,141,0.85)
+  );
+}
+.hero-content{position:relative;z-index:2;max-width:700px;}
+.hero h1{font-size:2.6rem;margin-bottom:12px;}
+.hero p{font-size:1.1rem;color:#E9E4F5;}
+
+/* Section Styles */
+section{padding:80px 20px;text-align:center;}
+h2.section-title{font-size:2rem;margin-bottom:20px;color:var(--accent);}
+
+/* Timeline */
+.timeline{display:grid;gap:30px;max-width:900px;margin:auto;text-align:left;}
+.timeline-step{background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);position:relative;}
+.timeline-step::before{
+  content:"";
+  position:absolute;
+  left:-10px;
+  top:0;
+  width:4px;
+  height:100%;
+  background:var(--accent2);
+  border-radius:4px;
+}
+.timeline-step h3{margin-bottom:6px;color:var(--accent2);}
+.timeline-step p{color:var(--muted);}
+
+/* Comparison */
+.compare-table{max-width:1000px;margin:auto;border-collapse:collapse;width:100%;box-shadow:var(--shadow);}
+.compare-table th,.compare-table td{
+  border:1px solid rgba(28,12,56,0.12);
+  padding:14px;
+  text-align:center;
+}
+.compare-table th{background:var(--card);color:var(--accent);}
+.compare-table td{background:var(--bg);}
+[data-theme="dark"] .compare-table td,
+[data-theme="dark"] .compare-table th{
+  border-color:rgba(255,255,255,0.12);
+}
+
+/* Features Grid */
+.features{display:grid;gap:24px;max-width:1100px;margin:80px auto;}
+@media(min-width:720px){.features{grid-template-columns:repeat(3,1fr)}}
+.feature{background:var(--card);padding:24px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;transition:.3s;}
+.feature:hover{transform:translateY(-5px);}
+.feature h3{margin-bottom:10px;color:var(--accent);}
+.feature p{color:var(--muted);font-size:0.95rem;}
+
+/* Gamification */
+.badges{display:grid;gap:24px;max-width:800px;margin:auto;}
+@media(min-width:720px){.badges{grid-template-columns:repeat(3,1fr)}}
+.badge-card{background:var(--card);padding:24px;border-radius:var(--radius);box-shadow:var(--shadow);}
+.badge-card h4{margin-bottom:10px;color:var(--accent2);}
+.badge-card p{color:var(--muted);font-size:0.9rem;}
+
+/* Showcase */
+.showcase {
+  background: var(--card);
+  padding: 60px 20px;
+  text-align: center;
+}
+.skills-grid{display:grid;gap:24px;max-width:1000px;margin:auto;}
+@media(min-width:720px){.skills-grid{grid-template-columns:repeat(3,1fr)}}
+.skill-card{background:var(--bg);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);}
+.skill-card h4{margin-bottom:6px;color:var(--accent2);}
+.skill-card p{color:var(--muted);}
+
+/* Footer */
+footer{background:var(--card);padding:40px 20px;margin-top:60px;color:var(--muted);}
+.footer-cols{display:grid;gap:30px;text-align:left;max-width:1000px;margin:auto}
+@media(min-width:720px){.footer-cols{grid-template-columns:repeat(3,1fr)}}
+footer h4{color:var(--text);margin-bottom:10px}
+footer a{color:var(--muted);text-decoration:none;display:block;margin:4px 0}
+footer a:hover{color:var(--accent)}
+
+/* Modals */
+.modal {
+  display:none;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(20,16,33,0.7);
+  align-items:center;
+  justify-content:center;
+}
+.modal.open {
+  display:flex;
+}
+.modal-content {
+  background:var(--card);
+  padding:30px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  max-width:380px;
+  width:90%;
+  text-align:center;
+  position:relative;
+}
+.close-btn{float:right;font-size:1.2rem;cursor:pointer;color:var(--muted);}
+.modal h2, .modal h3, .modal p, .modal button {
+  text-align:center;
+}
+.modal input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:1px solid var(--violet-300);
+  border-radius:10px;
+
+  background:var(--bg);      /* theme friendly */
+  color:var(--text);         /* readable text */
+
+  font-size:14px;
+}
+
+/* placeholder visibility */
+.modal input::placeholder{
+  color:var(--muted);
+  opacity:1;
+}
+
+
+  </style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="logo">SkillSwap</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <button class="toggle-theme" id="themeBtn" title="Toggle Dark/Light">🌙</button>
+   <button class="btn btn-login" id="loginBtn">Login</button>
+    <button class="btn btn-signup" id="signupBtn">Sign Up</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Explore the Power of SkillSwap</h1>
+    <p>Every feature designed to help you learn, teach, and grow within a trusted community.</p>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">How SkillSwap Works</h2>
+  <div class="timeline">
+    <div class="timeline-step"><h3>1. Create Your Profile</h3><p>Showcase your skills, interests, and what you’d love to learn.</p></div>
+    <div class="timeline-step"><h3>2. Get Matched</h3><p>AI matches you with people nearby who complement your learning goals.</p></div>
+    <div class="timeline-step"><h3>3. Chat & Schedule</h3><p>Connect directly, plan lessons, and learn from each other seamlessly.</p></div>
+    <div class="timeline-step"><h3>4. Exchange & Review</h3><p>After each exchange, leave reviews and earn badges for your progress!</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Why SkillSwap Is Different</h2>
+  <table class="compare-table">
+    <tr><th>Feature</th><th>SkillSwap</th><th>Traditional Platforms</th></tr>
+    <tr><td>Payment Model</td><td>Free Skill Exchange</td><td>Paid Lessons</td></tr>
+    <tr><td>Community Focus</td><td>Local & Collaborative</td><td>One-way learning</td></tr>
+    <tr><td>AI Matching</td><td>Smart Skill Pairing</td><td>Manual Search</td></tr>
+    <tr><td>Trust System</td><td>Peer Reviews & Badges</td><td>Limited Feedback</td></tr>
+    <tr><td>Opportunities</td><td>Learn & Teach Together</td><td>Learn Only</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2 class="section-title">Gamification & Rewards</h2>
+  <div class="badges">
+    <div class="badge-card"><h4>🏅 Mentor Badge</h4><p>Earned after completing 5 successful teaching sessions.</p></div>
+    <div class="badge-card"><h4>🌟 Star Learner</h4><p>Recognized for consistent engagement and community positivity.</p></div>
+    <div class="badge-card"><h4>💬 Connector</h4><p>For users who create strong learning circles and help others connect.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Core Platform Features</h2>
+  <div class="features">
+    <div class="feature"><h3>🧍 User Profiles</h3><p>Create detailed profiles to showcase your strengths and learning goals.</p></div>
+    <div class="feature"><h3>🔁 Skill Matching</h3><p>AI-driven matching connects you with the best partners for mutual growth.</p></div>
+    <div class="feature"><h3>💬 Chat System</h3><p>Plan, discuss, and schedule your learning sessions easily.</p></div>
+    <div class="feature"><h3>⭐ Ratings & Reviews</h3><p>Build your credibility and trust in the SkillSwap community.</p></div>
+    <div class="feature"><h3>📅 Scheduling Tools</h3><p>Integrated calendar sync keeps your exchanges organized.</p></div>
+    <div class="feature"><h3>💰 Premium Options</h3><p>Host paid workshops or get verified for added trust.</p></div>
+  </div>
+</section>
+
+<section class="showcase">
+  <h2>Popular Skill Exchanges</h2>
+  <div class="skills-grid">
+    <div class="skill-card"><h4>🎸 Guitar Lessons</h4><p>Offered by <b>Alex</b> — wants to learn: <i>Web Design</i></p></div>
+    <div class="skill-card"><h4>💻 Front-End Development</h4><p>Offered by <b>Priya</b> — wants to learn: <i>Cooking</i></p></div>
+    <div class="skill-card"><h4>🧘 Yoga Practice</h4><p>Offered by <b>Sam</b> — wants to learn: <i>Public Speaking</i></p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-cols">
+    <div>
+      <h4>About SkillSwap</h4>
+      <p>SkillSwap connects people who want to learn with those who love to teach — no money, just knowledge.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="privacy policy.html">Privacy policy</a>
+      <a href="terms and conditions.html">Terms and conditions</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a href="mailto:info@skillswap.com">info@skillswap.com</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Instagram</a>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:20px;">© 2025 SkillSwap • All rights reserved</p>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+    <h3>Login</h3>
+
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+
+    <button type="button" class="btn" id="loginBtnSubmit">Login</button>
+
+    <p style="margin-top:10px;color:var(--muted);">
+      Forgot password?
+      <a href="#" id="forgotLink" style="color:var(--accent)">Reset</a>
+    </p>
+  </div>
+</div>
+
+
+<!-- SIGNUP MODAL -->
+<div class="modal" id="signupModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('signupModal')">&times;</span>
+    <h3>Sign Up</h3>
+
+    <input type="text" id="signupName" placeholder="Full Name" required>
+    <input type="email" id="signupEmail" placeholder="Email" required>
+    <input type="password" id="signupPassword" placeholder="Password" required>
+
+    <button type="button" class="btn" id="signupBtnSubmit">Create Account</button>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal" id="forgotModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('forgotModal')">&times;</span>
+    <h3>Reset Password</h3>
+    <input type="email" placeholder="Enter your email" id="resetEmail">
+    <button class="btn btn-login" onclick="resetPassword()">Send Reset Link</button>
+  </div>
+</div>
+<script>
+/* ============================
+   THEME TOGGLE
+============================ */
+document.addEventListener("DOMContentLoaded", () => {
+  const body = document.body;
+  const themeBtn = document.getElementById('themeBtn');
+  const savedTheme = localStorage.getItem('theme') || 'light';
+
+  function setTheme(t) {
+    body.dataset.theme = t;
+    localStorage.setItem('theme', t);
+    if (themeBtn) {
+      themeBtn.textContent = t === 'light' ? '🌙' : '☀️';
+    }
+  }
+
+  setTheme(savedTheme);
+
+  if (themeBtn) {
+    themeBtn.onclick = () =>
+      setTheme(body.dataset.theme === 'light' ? 'dark' : 'light');
+  }
+
+  /* ============================
+     MODAL CONTROLS
+  ============================ */
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'none';
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target.classList.contains("modal")) {
+      e.target.style.display = "none";
+    }
+  });
+
+  // Modal buttons
+  const loginBtnNav = document.getElementById('loginBtn');
+  const signupBtnNav = document.getElementById('signupBtn');
+  const joinNowBtn = document.getElementById('joinNowBtn');
+
+  if (loginBtnNav) loginBtnNav.onclick = () => openModal('loginModal');
+  if (signupBtnNav) signupBtnNav.onclick = () => openModal('signupModal');
+  if (joinNowBtn) joinNowBtn.onclick = () => openModal('signupModal');
+
+  /* ============================
+     CONFIG
+  ============================ */
+  const BASE_URL = "http://127.0.0.1:8000";
+
+  console.log("AUTH SCRIPT ACTIVE");
+
+  const loginBtnSubmit  = document.getElementById("loginBtnSubmit");
+  const signupBtnSubmit = document.getElementById("signupBtnSubmit");
+  const forgotLink = document.getElementById('forgotLink');
+
+  if (forgotLink) {
+    forgotLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("Forgot password clicked");
+      closeModal('loginModal');
+      openModal('forgotModal');
+    });
+  }
+
+  if (loginBtnSubmit) {
+    loginBtnSubmit.addEventListener("click", (e) => {
+      e.preventDefault();
+      handleLogin();
+    });
+  }
+
+  if (signupBtnSubmit) {
+    signupBtnSubmit.addEventListener("click", (e) => {
+      e.preventDefault();
+      handleSignup();
+    });
+  }
+
+  /* ============================
+     POPUP + REDIRECT
+  ============================ */
+  window.showPopupAndRedirect = function(message, url, delay = 1200) {
+    const popup = document.createElement("div");
+    popup.textContent = message;
+
+    popup.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2e7d32;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+    `;
+
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+      popup.remove();
+      window.location.href = url;
+    }, delay);
+  };
+
+  /* ============================
+     LOGIN
+  ============================ */
+  window.handleLogin = async function() {
+    console.log("Login clicked");
+
+    const emailInput = document.getElementById("loginEmail");
+    const passInput  = document.getElementById("loginPassword");
+
+    if (!emailInput || !passInput) {
+      alert("Login inputs not found");
+      return;
+    }
+
+    const email = emailInput.value.trim();
+    const password = passInput.value.trim();
+
+    if (!email || !password) {
+      alert("Email and password are required");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      console.log("Login response:", data);
+
+      if (res.ok && data.success) {
+        localStorage.setItem(
+          "skillswap_current_user",
+          JSON.stringify({
+            id: data.user.id,
+            name: data.user.username,
+            email: data.user.email
+          })
+        );
+
+        showPopupAndRedirect(
+          "Login successful! Redirecting to dashboard…",
+          "dashboard.html",
+          800
+        );
+      } else {
+        alert(data.error || "Invalid credentials");
+      }
+
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
+      alert("Backend not reachable");
+    }
+  };
+
+  /* ============================
+     SIGNUP
+  ============================ */
+  window.handleSignup = async function() {
+    console.log("Signup clicked");
+
+    const nameInput  = document.getElementById("signupName");
+    const emailInput = document.getElementById("signupEmail");
+    const passInput  = document.getElementById("signupPassword");
+
+    if (!nameInput || !emailInput || !passInput) {
+      alert("Signup inputs not found");
+      return;
+    }
+
+    const username = nameInput.value.trim();
+    const email    = emailInput.value.trim();
+    const password = passInput.value.trim();
+
+    if (!username || !email || !password) {
+      alert("All fields are required");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/signup/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const data = await res.json();
+      console.log("Signup response:", data);
+
+      if (res.ok && data.success) {
+        localStorage.setItem(
+          "skillswap_current_user",
+          JSON.stringify({
+            id: data.user.id,
+            name: data.user.username,
+            email: data.user.email
+          })
+        );
+
+        showPopupAndRedirect(
+          "Signup successful! Redirecting to dashboard…",
+          "dashboard.html",
+          1200
+        );
+      } else {
+        alert(data.error || "Signup failed");
+      }
+
+    } catch (err) {
+      console.error("SIGNUP ERROR:", err);
+      alert("Backend not reachable");
+    }
+  };
+
+  /* ============================
+     RESET PASSWORD
+  ============================ */
+  window.resetPassword = async function() {
+    const email = document.getElementById("resetEmail")?.value.trim();
+
+    if (!email) {
+      alert("Please enter your email.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/reset-password/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      console.log("Reset password response:", data);
+
+      if (data.message) {
+        alert(data.message);
+        closeModal("forgotModal");
+      } else {
+        alert(data.error || "Reset failed");
+      }
+
+    } catch (err) {
+      console.error("RESET ERROR:", err);
+      alert("Backend not reachable");
+    }
+  };
+
+});
+</script>
+
+
+</body>
+</html>
