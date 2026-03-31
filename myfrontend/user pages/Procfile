@@ -1,1 +1,1 @@
-web: gunicorn SkillSwap.wsgi
+web: gunicorn mybackend.wsgi 
