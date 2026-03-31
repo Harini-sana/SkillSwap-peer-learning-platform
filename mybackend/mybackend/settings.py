@@ -13,6 +13,7 @@ SECRET_KEY = "django-insecure-(pvto-a$3r%@6udyv0w(=syleiptd+)-x$ljza8u)tsnvup+r#
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
