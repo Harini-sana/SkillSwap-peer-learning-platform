@@ -911,7 +911,7 @@ async function submitSkill() {
 
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/skills/", {
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/skills/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -944,7 +944,7 @@ async function submitRequest() {
 
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/skills/", {
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/skills/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -989,10 +989,8 @@ async function loadActivityFromBackend() {
   if (!user) return;
 
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/activities/?user_id=${user.id}`,
-      { credentials: "include" }
-    );
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/activities/?user_id=${user.id}`)
+      { credentials: "include" };
 
     if (!res.ok) {
       console.error("Failed to load activities");
@@ -1013,7 +1011,7 @@ async function addActivity(text) {
   if (!user) return;
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/activities/", {
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/activities/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -1098,7 +1096,7 @@ async function generateRoadmap() {
   };
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/roadmaps/", {
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/roadmaps/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -1198,7 +1196,7 @@ async function markRoadmapDone(index) {
   if (!roadmap || roadmap.completed) return;
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/roadmaps/${roadmap.id}/`, {
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/roadmaps/${roadmap.id}/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -1232,10 +1230,9 @@ async function loadRoadmapsFromBackend() {
 
   if (!user) return;
 
-  const res = await fetch(
-    `http://127.0.0.1:8000/api/roadmaps/?user_id=${user.id}`,
+  const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/roadmaps/?user_id=${user.id}`);
     { credentials: "include" }
-  );
+  ;
 
   if (!res.ok) {
     console.error("Failed to load roadmaps");
@@ -1269,10 +1266,9 @@ async function loadEventsFromBackend() {
   if (!user) return;
 
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/events/?user_id=${user.id}`,
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/events/?user_id=${user.id}`);
       { credentials: "include" }
-    );
+    ;
 
     if (!res.ok) {
       console.error("Failed to load events");
@@ -1516,7 +1512,7 @@ async function addEvent(date) {
   if (!title) return showToast("Enter event title");
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/events/", {
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/events/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -1552,7 +1548,7 @@ showToast("Event added 📅");
 ========================================================= */
 async function toggleEvent(id, completed) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/events/${id}/`, {
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/events/${id}/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -1611,10 +1607,9 @@ async function renderBannerMessage() {
   if (!user || !user.id) return;
 
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/dashboard/banner/?user_id=${user.id}`,
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/dashboard/banner/?user_id=${user.id}`);
       { credentials: "include" }
-    );
+    ;
 
     if (!res.ok) throw new Error("API failed");
 
@@ -1635,10 +1630,9 @@ async function getWeeklySummary() {
 
   if (!user) return 0;
 
-  const res = await fetch(
-    `http://127.0.0.1:8000/api/dashboard/weekly/?user_id=${user.id}`,
+  const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/dashboard/weekly/?user_id=${user.id}`);
     { credentials: "include" }
-  );
+  ;
 
   const data = await res.json();
   return data.completed_this_week || 0;
@@ -1655,10 +1649,9 @@ async function renderSkillTimeline() {
 
   if (!user) return;
 
-  const res = await fetch(
-    `http://127.0.0.1:8000/api/dashboard/timeline/?user_id=${user.id}`,
+  const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/dashboard/timeline/?user_id=${user.id}`);
     { credentials: "include" }
-  );
+  ;
 
   const data = await res.json();
   data.sort((a,b) => {
@@ -1716,10 +1709,9 @@ async function renderExchangeStats() {
   }
 
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/dashboard/exchange-stats/?user_id=${user.id}`,
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/dashboard/exchange-stats/?user_id=${user.id}`);
       { credentials: "include" }
-    );
+    ;
 
     if (!res.ok) {
       const err = await res.text();
@@ -1817,10 +1809,9 @@ async function renderWeeklyReflection() {
   if (!user) return;
 
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/dashboard/reflection/?user_id=${user.id}`,
+    const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/dashboard/reflection/?user_id=${user.id}`);
       { credentials: "include" }
-    );
+    ;
 
     const data = await res.json();
 
@@ -1857,7 +1848,7 @@ async function saveReflection(week) {
 
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/dashboard/reflection/save/", {
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/dashboard/reflection/save/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -1885,7 +1876,7 @@ async function saveReflection(week) {
 ========================================================= */
 async function toggleRoadmapStep(roadmapId, stepIndex) {
   try {
-    await fetch(`http://127.0.0.1:8000/api/roadmaps/${roadmapId}/step/`, {
+    await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/roadmaps/${roadmapId}/step/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

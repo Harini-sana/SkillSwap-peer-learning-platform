@@ -424,25 +424,28 @@ for anchor tag
   </div>
 </div>
 <script>
+/* =========================
+   SEND EXCHANGE LINK
+========================= */
 async function sendExchangeLink(exchangeId) {
-
   if (!activeChatUserId) return alert("Select a user first");
 
-  await fetch(`http://127.0.0.1:8000/api/chat/${activeChatUserId}/send/`, {
+  await fetch(`${BASE_URL}/api/chat/${activeChatUserId}/send/`, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": getCSRFToken()
     },
-    body: JSON.stringify({
-      exchange_id: exchangeId
-    })
+    body: JSON.stringify({ exchange_id: exchangeId })
   });
 
   openChat(activeChatUserId, document.getElementById("chatHeader").textContent);
 }
-  function getCSRFToken() {
+/* =========================
+   CSRF TOKEN
+========================= */
+function getCSRFToken() {
   const name = "csrftoken";
   const cookies = document.cookie.split(";");
   for (let c of cookies) {
@@ -453,6 +456,7 @@ async function sendExchangeLink(exchangeId) {
   }
   return null;
 }
+
 /* =========================================================
    ONLINE / OFFLINE PRESENCE STATE
 ========================================================= */
@@ -475,7 +479,7 @@ async function loadConversations() {
   try {
     listEl.innerHTML = `<p style="color:#777">Loading conversations...</p>`;
 
-    const res = await fetch("http://127.0.0.1:8000/api/chat/conversations/", {
+    const res = await fetch(`${BASE_URL}/api/chat/conversations/`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -577,9 +581,9 @@ async function openChat(userId, name) {
   messagesEl.innerHTML = `<div class="empty">Loading messages...</div>`;
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/chat/${userId}/messages/`, {
-      credentials: "include"
-    });
+     const res = await fetch(`${BASE_URL}/api/chat/${userId}/messages/`, {
+    credentials: "include"
+  });
 
     if (!res.ok) {
       console.error("Failed to load messages:", res.status);
@@ -777,7 +781,7 @@ async function sendMessage() {
   if (!activeChatUserId) return alert("Select a user first");
 
   // 1️⃣ Send to backend (save in DB)
-  const res = await fetch(`http://127.0.0.1:8000/api/chat/${activeChatUserId}/send/`, {
+  const res = await fetch(`${BASE_URL}/api/chat/${activeChatUserId}/send/`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -891,7 +895,7 @@ function connectSocket(userId) {
   const currentUserId =
   JSON.parse(localStorage.getItem("skillswap_state"))?.user?.id;
 
-socket = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${currentUserId}/`);
+ socket = new WebSocket(`wss://skillswap-peer-learning-platform.onrender.com/ws/chat/${userId}/`);
 
   socket.onopen = () => {
     console.log("WebSocket connected for user:", userId);

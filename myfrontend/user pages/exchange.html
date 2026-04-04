@@ -646,33 +646,27 @@
   </div>
 </div>
 <script>
+const BASE_URL = "https://skillswap-peer-learning-platform.onrender.com";
 let users = [];
 
 async function loadUsersForShare() {
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/chat/conversations/", {
-      credentials: "include"
-    });
+    const res = await fetch(
+      "https://skillswap-peer-learning-platform.onrender.com/api/chat/conversations/",
+      {
+        credentials: "include"
+      }
+    );
 
     if (!res.ok) throw new Error();
 
     users = await res.json();
+
   } catch (e) {
     console.error("Failed loading users", e);
     users = [];
   }
 }
-document.getElementById("shareRoomBtn").onclick = () => {
-  const exchange = JSON.parse(localStorage.getItem("activeExchange"));
-  if (!exchange) return alert("No active exchange");
-
-  shareExchangeRoom(exchange.id);
-};
-document.getElementById("shareModal").onclick = e => {
-  if (e.target.id === "shareModal") {
-    e.target.style.display = "none";
-  }
-};
   function shareExchangeRoom(exchangeId) {
   activeShareExchange = exchangeId;
 
@@ -713,7 +707,7 @@ async function sendExchange(userId) {
 
     const link = `${window.location.origin}/exchange.html?exchange_id=${exchange.id}`;
 
-    const res = await fetch(`http://127.0.0.1:8000/api/chat/${userId}/send/`, {
+    const res = await fetch(`${BASE_URL}/api/chat/${userId}/send/`, {
   method: "POST",
   credentials: "include",
   headers: { "Content-Type": "application/json" },
@@ -768,16 +762,16 @@ document.getElementById('sendMsgBtn').onclick = async () => {
     const exchange = JSON.parse(localStorage.getItem("activeExchange"));
     if (!exchange) return alert("No active exchange found");
 
-    const res = await fetch("http://127.0.0.1:8000/api/exchange/message/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        exchange_id: exchange.id,
-        sender_id: GLOBAL_STATE.user.id,
-        message: msg
-      })
-    });
+    const res = await fetch(`${BASE_URL}/api/exchange/message/`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({
+    exchange_id: exchange.id,
+    sender_id: GLOBAL_STATE.user.id,
+    message: msg
+  })
+});
 
     if (!res.ok) return alert("Failed to send message");
 
@@ -801,9 +795,9 @@ async function loadExchangeMessages() {
     if (!exchange || !exchange.id) return;
 
     const res = await fetch(
-      `http://127.0.0.1:8000/api/exchange/${exchange.id}/messages/`,
-      { credentials: "include" }
-    );
+  `${BASE_URL}/api/exchange/${exchange.id}/messages/`,
+  { credentials: "include" }
+);
 
     if (!res.ok) return;
 
@@ -918,16 +912,16 @@ submitReviewBtn.onclick = async () => {
       return;
     }
 
-    const res = await fetch("http://127.0.0.1:8000/api/exchange/review/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        exchange_id: exchange.id,
-        reviewer_id: GLOBAL_STATE.user.id,
-        rating: rating,
-        feedback: feedback
-      })
-    });
+    const res = await fetch(`${BASE_URL}/api/exchange/review/`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    exchange_id: exchange.id,
+    reviewer_id: GLOBAL_STATE.user.id,
+    rating,
+    feedback
+  })
+});
 
     if (!res.ok) {
       alert("Failed to submit review");
@@ -1126,10 +1120,10 @@ function startCountdown() {
 
 async function loadExchangeFromBackend(exchangeId) {
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/exchange/${exchangeId}/`,
-      { credentials: "include" }
-    );
+   const res = await fetch(
+  `${BASE_URL}/api/exchange/${exchangeId}/`,
+  { credentials: "include" }
+);
 
     if (!res.ok) {
       alert("Exchange not found");
@@ -1198,11 +1192,11 @@ async function createExchange() {
       time: exchangeTime.value
     };
 
-    const res = await fetch("http://127.0.0.1:8000/api/exchange/create/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(`${BASE_URL}/api/exchange/create/`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
 
     const data = await res.json().catch(() => ({}));
 
@@ -1289,54 +1283,65 @@ function hydrateExchangeRoom() {
 async function completeExchangeFromRoom(exchange) {
   try {
     if (!exchange || !exchange.id) {
-      console.error("❌ Invalid exchange object:", exchange);
+      console.error("Invalid exchange object:", exchange);
       return false;
     }
 
     const userId = GLOBAL_STATE?.user?.id;
     if (!userId) {
-      console.error("❌ User not found in GLOBAL_STATE");
+      console.error("User not found in GLOBAL_STATE");
       return false;
     }
 
-    // 1️⃣ Mark exchange as completed in backend
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/exchange/${exchange.id}/complete/`,
-      { method: "POST", credentials: "include" }
+    // 1️⃣ Mark exchange as completed
+    const completeRes = await fetch(
+      `${BASE_URL}/api/exchange/${exchange.id}/complete/`,
+      {
+        method: "POST",
+        credentials: "include"
+      }
     );
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error("❌ Exchange completion failed:", err);
+    if (!completeRes.ok) {
+      const err = await completeRes.text();
+      console.error("Exchange completion failed:", err);
       return false;
     }
 
-    // 2️⃣ Create activity for dashboard
-    await fetch("http://127.0.0.1:8000/api/activities/", {
+    // 2️⃣ Add activity
+    await fetch(`${BASE_URL}/api/activities/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         user_id: userId,
-        text: `Completed exchange: ${exchange.skill_a || exchange.skillA} ↔ ${exchange.skill_b || exchange.skillB}`
+        text: `Completed exchange: ${
+          exchange.skill_a || exchange.skillA
+        } ↔ ${
+          exchange.skill_b || exchange.skillB
+        }`
       })
     });
 
-    // 3️⃣ Create event for dashboard (THIS WAS BREAKING YOUR PAGE)
-    await fetch("http://127.0.0.1:8000/api/events/", {
+    // 3️⃣ Add event
+    await fetch(`${BASE_URL}/api/events/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         user_id: userId,
-        title: `Exchange completed: ${exchange.skill_a || exchange.skillA} ↔ ${exchange.skill_b || exchange.skillB}`,
+        title: `Exchange completed: ${
+          exchange.skill_a || exchange.skillA
+        } ↔ ${
+          exchange.skill_b || exchange.skillB
+        }`,
         type: "exchange",
         date: new Date().toISOString().split("T")[0],
         completed: true
       })
     });
 
-    // 4️⃣ Update Exchange Room UI
+    // 4️⃣ UI Updates
     const countdownEl = document.getElementById("countdown");
     if (countdownEl) {
       countdownEl.textContent = "✔ Session completed";
@@ -1351,14 +1356,14 @@ async function completeExchangeFromRoom(exchange) {
       joinBtn.style.cursor = "not-allowed";
     }
 
-    // ✅ Tell dashboard to refresh next time it opens
+    // 5️⃣ Notify dashboard
     localStorage.setItem("forceDashboardRefresh", "1");
 
-    console.log("✅ Exchange completed & dashboard notified");
+    console.log("Exchange completed successfully");
     return true;
 
   } catch (err) {
-    console.error("❌ Complete exchange error:", err);
+    console.error("Complete exchange error:", err);
     return false;
   }
 }
@@ -1366,7 +1371,7 @@ async function completeExchangeFromRoom(exchange) {
 
 async function loadUsersForExchange(){
 
-  const res = await fetch("http://127.0.0.1:8000/api/connect/people/");
+  const res = await fetch(`${BASE_URL}/api/connect/people/`);
   const users = await res.json();
 
   const options = document.getElementById("partnerOptions");

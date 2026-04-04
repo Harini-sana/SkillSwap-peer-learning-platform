@@ -686,7 +686,7 @@ textarea {
 /* =========================================================
    LOAD STATE
 ========================================================= */
-
+const BASE_URL = "https://skillswap-peer-learning-platform.onrender.com";
 const KEY = "skillswap_state";
 
 const rawState = JSON.parse(localStorage.getItem(KEY)) || {};
@@ -721,9 +721,9 @@ async function loadProfileFromBackend() {
     return;
   }
 
-  try {
+ try {
     const res = await fetch(
-      `http://127.0.0.1:8000/api/users/${state.user.id}/`,
+      `${BASE_URL}/api/roadmaps/?user_id=${state.user.id}`,
       { credentials: "include" }
     );
 
@@ -760,7 +760,7 @@ async function loadRoadmapsFromBackend() {
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/api/roadmaps/?user_id=${state.user.id}`,
+      `${BASE_URL}/api/roadmaps/?user_id=${state.user.id}`,
       { credentials: "include" }
     );
 
@@ -850,9 +850,9 @@ async function renderStats() {
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/api/profile/stats/?user_id=${state.user.id}`,
-      { credentials: "include" }
-    );
+    `${BASE_URL}/api/profile/stats/?user_id=${state.user.id}`,
+    { credentials: "include" }
+  );
 
     if (!res.ok) {
       console.error("Failed to load stats");
@@ -913,12 +913,15 @@ async function saveProfile() {
     name: document.getElementById("nameInput")?.value.trim()
   };
 
-  const res = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+  const res = await fetch(`${BASE_URL}/api/users/${user.id}/`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      name: document.getElementById("nameInput").value
+    })
   });
+
 
   if (!res.ok) {
     showToast("Failed to update profile ❌");

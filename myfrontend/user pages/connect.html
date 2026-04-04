@@ -702,7 +702,7 @@ let people = [];
 
 async function loadPeople() {
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/connect/people/");
+    const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/connect/people/");
     const data = await res.json();
 
     people = data.map(p => ({
@@ -867,7 +867,7 @@ document.addEventListener("click", async e => {
   try {
 
   /* ---------- SEND EXCHANGE REQUEST ---------- */
-  const res = await fetch("http://127.0.0.1:8000/api/connect/request/", {
+  const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/connect/request/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -885,7 +885,7 @@ document.addEventListener("click", async e => {
 
   /* ---------- MESSAGE FOR RECEIVER ---------- */
 /* ---------- MESSAGE FOR SENDER ---------- */
-await fetch("http://127.0.0.1:8000/api/messages/system/", {
+await fetch("https://skillswap-peer-learning-platform.onrender.com/api/messages/system/", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -897,7 +897,7 @@ await fetch("http://127.0.0.1:8000/api/messages/system/", {
 });
 /* ---------- MESSAGE FOR SENDER ---------- */
 /* ---------- MESSAGE FOR RECEIVER ---------- */
-await fetch("http://127.0.0.1:8000/api/messages/system/", {
+await fetch("https://skillswap-peer-learning-platform.onrender.com/api/messages/system/", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -1086,7 +1086,7 @@ function openExchange() {
 }
 //mark sent request
 async function markSentRequests() {
-  const res = await fetch(`http://127.0.0.1:8000/api/connect/sent/${GLOBAL_STATE.user.id}/`);
+  const res = await fetch(`https://skillswap-peer-learning-platform.onrender.com/api/connect/sent/${GLOBAL_STATE.user.id}/`);
   const sentIds = await res.json();
 
   document.querySelectorAll(".exchange-btn").forEach(btn => {
@@ -1116,7 +1116,7 @@ async function createCard(){
       .split(",")
       .map(s => s.trim());
 
-  const res = await fetch("http://127.0.0.1:8000/api/connect/create-profile/",{
+  const res = await fetch("https://skillswap-peer-learning-platform.onrender.com/api/connect/create-profile/",{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
@@ -1144,7 +1144,7 @@ async function createCard(){
 }
 async function viewProfile(userId) {
 
-  await fetch("http://127.0.0.1:8000/api/profile/view/", {
+  await fetch("https://skillswap-peer-learning-platform.onrender.com/api/profile/view/", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     credentials: "include",
